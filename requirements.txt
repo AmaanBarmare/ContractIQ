@@ -1,0 +1,4 @@
+pymupdf>=1.24
+ibm-watsonx-ai>=1.1
+pydantic>=2.7
+python-dotenv>=1.0

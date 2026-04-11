@@ -4,6 +4,22 @@ This file is read automatically by Claude Code. It contains everything needed to
 
 ---
 
+## Working Rules (Must Follow)
+
+**1. The 95% Confidence Rule.**
+Do not take action, make changes, or commit to a direction unless you are at least 95% confident it is correct. If you are not that certain, stop and investigate further (read more code, check docs, ask the user) before proceeding. Guessing, "probably this," or plausible-sounding assumptions are not acceptable substitutes for certainty. When confidence is below the bar, say so and surface the uncertainty rather than pushing forward.
+
+**2. Plan → Build → Test, One Step at a Time.**
+For any non-trivial change, follow this loop strictly:
+  1. **Plan** the specific piece of work before touching code — know exactly what you're changing and why.
+  2. **Build** only that piece.
+  3. **Test** it (run it, execute the relevant tests, verify the behavior end-to-end) and confirm it actually works before moving on.
+  4. Only then move to the next piece.
+
+Do not stack multiple untested changes on top of each other. Do not assume code works because it "looks right" — verify it. If a step cannot be tested yet, state that explicitly and explain how it will be validated later.
+
+---
+
 ## What This Project Is
 
 ContractIQ is a multi-agent AI platform for procurement teams. Six specialized agents — orchestrated by IBM Watsonx Orchestrate — work together to extract contract data, detect risk, research vendors in real time via Tavily, recommend decisions, and generate stakeholder-ready artifacts. All inter-agent communication flows through Redis Streams. All state lives in Redis.
