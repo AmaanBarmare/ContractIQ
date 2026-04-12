@@ -42,6 +42,8 @@ This Master Services Agreement ("Agreement") is entered into as of August 15, 20
 
 2.3 No Termination for Convenience. Neither party may terminate this Agreement or any active Order Form for convenience. Early termination is permitted only as expressly set forth in Section 2.2.
 
+2.4 Non-Renewal. Either party may elect not to renew any active Order Form upon thirty (30) days prior written notice to the other party, delivered in accordance with Section 7 (Notices). Order Forms that are not affirmatively non-renewed within the applicable notice window shall continue in effect as provided in the governing Order Form.
+
 3. LIABILITY
 
 Each party acknowledges that the Services are provided on an as-is basis. Neither party shall be liable for indirect, consequential, incidental, or punitive damages arising out of or related to this Agreement. The parties have not agreed upon any aggregate cap on direct damages under this Agreement, and each party retains all rights to recover direct damages without limitation.
@@ -99,7 +101,7 @@ This Order Form shall automatically renew for successive one-year terms at the t
 
 Notice Period
 
-Customer must provide sixty (60) days written notice prior to the Renewal Date in order to cancel, elect non-renewal, or modify the scope of this Order Form. Notices must be sent to legal@zoom.us with a copy to the Customer Success Manager.
+Customer must provide written notice prior to the Renewal Date in order to cancel, elect non-renewal, or modify the scope of this Order Form. Per the governing Master Services Agreement, such notice shall be delivered no later than thirty (30) days prior to the Renewal Date. Notices must be sent to legal@zoom.us with a copy to the Customer Success Manager.
 
 Governing Agreement
 
@@ -124,7 +126,7 @@ The Licensed Users count remains one hundred eighty (180) seats. No additional s
 
 3. Renewal Mechanics Unchanged
 
-For the avoidance of doubt, the Renewal Date remains 2026-06-15, the notice period remains sixty (60) days, and the auto-renewal mechanics set forth in the Order Form remain unchanged.
+For the avoidance of doubt, the Renewal Date remains 2026-06-15 and the auto-renewal mechanics set forth in the Order Form remain unchanged. The parties acknowledge that the applicable notice period for non-renewal shall be determined by reference to the governing Master Services Agreement and the Order Form, with the parties having historically operated under a forty-five (45) day notice convention for administrative coordination purposes.
 
 4. All Other Terms
 
