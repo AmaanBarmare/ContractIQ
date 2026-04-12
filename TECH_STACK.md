@@ -13,7 +13,7 @@ Full breakdown of every technology used in ContractIQ, why it was chosen, and ex
 | Memory & State | Redis Stack (local) | 7.x |
 | External Research | Tavily Search API (via Orchestrate `vasco-tavily` tool) | — |
 | Document Parsing | PyMuPDF | Latest |
-| Backend API | FastAPI | 0.110.x |
+| Backend API | FastAPI | 0.115+ |
 | Frontend | React + Next.js | Next 14 |
 | Containerization | Docker | Latest |
 
@@ -231,14 +231,13 @@ that actually happens on real inputs.
 **WebSocket for Live Agent Feed:**
 ```python
 @app.websocket("/ws/agent-feed/{workflow_id}")
-async def agent_feed_websocket(websocket: WebSocket, workflow_id: str):
-    await websocket.accept()
-    pubsub = redis_client.pubsub()
-    await pubsub.subscribe(f"workflow:{workflow_id}:events")
-    
-    async for message in pubsub.listen():
-        if message["type"] == "message":
-            await websocket.send_json(json.loads(message["data"]))
+async def ws_agent_feed(websocket, workflow_id: str):
+    await agent_feed_handler(websocket, workflow_id)
+
+# In app/websocket/agent_feed.py:
+# Reads from the agent_events Redis Stream, filters by workflow_id,
+# and sends matching events to the WebSocket client in real time.
+# Uses asyncio.to_thread for non-blocking Redis xread calls.
 ```
 
 ---

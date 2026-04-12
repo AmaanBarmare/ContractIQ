@@ -10,49 +10,46 @@ Priority framework for the 48-hour build window. P0 must work perfectly before P
 
 Everything in P0 is required for the Renewal Rescue demo to run end-to-end.
 
-| Feature | Owner | Est. Hours |
+| Feature | Owner | Status |
 |---|---|---|
-| Contract upload (drag-and-drop, 4 files) | Frontend | 2 |
-| Ingestion Agent: classify documents, link to vendor | Agent Engineer | 3 |
-| Extraction Agent: 15+ key fields from PDF | Agent Engineer | 5 |
-| Watsonx Orchestrate: route between agents, confidence threshold | Integration Engineer | 6 |
-| Redis: contract Hash storage, Streams message bus | Integration Engineer | 3 |
-| Risk Agent: renewal risk + commercial risk flags | Agent Engineer | 4 |
-| Vendor Research Agent: Tavily integration (news + pricing + alternatives) | Integration Engineer | 3 |
-| Decision Agent: structured recommendation with reasoning | Agent Engineer | 4 |
-| Action Agent: negotiation prep sheet + vendor email draft | Agent Engineer | 3 |
-| Live Agent Feed: real-time Redis Stream → WebSocket → UI | Frontend + Integration | 4 |
-| Artifact Approval UI: review, edit, approve artifacts | Frontend | 3 |
-| Confidence routing: confirmation prompt for flagged fields | Integration + Frontend | 2 |
-| **P0 Total** | | **~42 hours** |
+| Contract upload (drag-and-drop, 4 files) | Frontend | Pending (frontend) |
+| Ingestion Agent: classify documents, link to vendor | Agent Engineer | **Done** (`app/agents/ingestion.py`) |
+| Extraction Agent: 15+ key fields from PDF | Agent Engineer | **Done** (`app/agents/extraction.py`) |
+| Watsonx Orchestrate: route between agents, confidence threshold | Integration Engineer | **Done** (`app/orchestrator/orchestrate.py`) |
+| Redis: contract Hash storage, Streams message bus | Integration Engineer | **Done** (`app/services/redis_client.py`) |
+| Risk Agent: renewal risk + commercial risk flags | Agent Engineer | **Done** (`app/agents/risk.py`) |
+| Vendor Research Agent: Tavily integration (news + pricing + alternatives) | Integration Engineer | **Done** (`app/agents/research.py`, `app/services/tavily_client.py`) |
+| Decision Agent: structured recommendation with reasoning | Agent Engineer | **Done** (`app/agents/decision.py`) |
+| Action Agent: negotiation prep sheet + vendor email draft | Agent Engineer | **Done** (`app/agents/generation.py`) |
+| Live Agent Feed: real-time Redis Stream → WebSocket → UI | Frontend + Integration | **Backend done** (`app/websocket/agent_feed.py`) |
+| Artifact Approval UI: review, edit, approve artifacts | Frontend | Pending (frontend); backend API ready |
+| Confidence routing: confirmation prompt for flagged fields | Integration + Frontend | Pending |
 
 ---
 
 ## P1 — Should Ship (Adds Depth and Demo Quality)
 
-| Feature | Owner | Est. Hours |
+| Feature | Owner | Status |
 |---|---|---|
-| Full 40+ field extraction | Agent Engineer | 3 |
-| Contract Q&A (natural language questions via Redis Vector Search) | Integration + Agent | 4 |
-| Renewal Command Center: 30/60/90-day view, priority sorted | Frontend | 3 |
-| Spend intelligence: total spend aggregation, category breakdown | Agent Engineer | 2 |
-| CFO Summary artifact | Agent Engineer | 1 |
-| Full Internal Renewal Brief artifact | Agent Engineer | 1 |
-| Full three-tier confidence routing (auto / human-review / escalate) | Integration | 2 |
-| **P1 Total** | | **~16 hours** |
+| Full 40+ field extraction | Agent Engineer | Pending |
+| Contract Q&A (natural language questions via Claude) | Integration + Agent | **Done** (`app/routers/qa.py`) |
+| Renewal Command Center: 30/60/90-day view, priority sorted | Frontend | **Backend done** (`app/routers/renewals.py`) |
+| Spend intelligence: total spend aggregation, category breakdown | Agent Engineer | **Done** (`app/routers/spend.py`) |
+| CFO Summary artifact | Agent Engineer | **Done** (executive summary in `generation.py`) |
+| Full Internal Renewal Brief artifact | Agent Engineer | **Done** (renegotiation brief in `generation.py`) |
+| Full three-tier confidence routing (auto / human-review / escalate) | Integration | Pending |
 
 ---
 
 ## P2 — Nice to Have (Only If P0 and P1 Are Fully Working)
 
-| Feature | Owner | Est. Hours |
+| Feature | Owner | Status |
 |---|---|---|
-| Portfolio dashboard with top-line metrics | Frontend | 4 |
-| Vendor workspace view with document history | Frontend | 3 |
-| Executive summary generator | Agent Engineer | 2 |
-| Duplicate detection during ingestion | Agent Engineer | 2 |
-| Redis TTL-based vendor research caching | Integration | 1 |
-| **P2 Total** | | **~12 hours** |
+| Portfolio dashboard with top-line metrics | Frontend | Pending |
+| Vendor workspace view with document history | Frontend | Pending |
+| Executive summary generator | Agent Engineer | **Done** (`generation.py`) |
+| Duplicate detection during ingestion | Agent Engineer | Pending |
+| Redis TTL-based vendor research caching | Integration | **Done** (`redis_client.py`, 24h TTL) |
 
 ---
 

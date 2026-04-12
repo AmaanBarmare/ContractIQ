@@ -26,16 +26,16 @@
 - [ ] Copy `.env.example` to `.env` and distribute API keys
 
 ### Integration Engineer
-- [ ] IBM Cloud account active — Watsonx Orchestrate workspace created
-- [ ] Test simplest Watsonx Orchestrate workflow: dispatch one dummy agent and confirm it returns
-- [ ] Local Redis running — test `redis-cli ping`
-- [ ] `vasco-tavily` tool inside Orchestrate tested: run one search for "Zoom company news" and confirm results return
-- [ ] FastAPI skeleton running on localhost
+- [x] IBM Cloud account active — Watsonx Orchestrate workspace created
+- [x] Test simplest Watsonx Orchestrate workflow: dispatch one dummy agent and confirm it returns
+- [x] Local Redis running — test `redis-cli ping`
+- [x] `vasco-tavily` tool inside Orchestrate tested: run one search for "Zoom company news" and confirm results return
+- [x] FastAPI skeleton running on localhost
 
 ### Agent Engineer
-- [ ] Python environment with `anthropic`, `pymupdf`, `pydantic`, `python-dotenv` installed
-- [ ] Test Claude model call: send a simple extraction prompt, confirm structured JSON returns
-- [ ] Confirm `ANTHROPIC_API_KEY` is set and the default model (`claude-sonnet-4-6`) is accessible
+- [x] Python environment with `anthropic`, `pymupdf`, `pydantic`, `python-dotenv` installed
+- [x] Test Claude model call: send a simple extraction prompt, confirm structured JSON returns
+- [x] Confirm `ANTHROPIC_API_KEY` is set and the default model (`claude-sonnet-4-6`) is accessible
 
 ### Frontend
 - [ ] Next.js project initialized with Tailwind + shadcn/ui
@@ -49,14 +49,14 @@
 ### Morning (9am–1pm) — Core Pipeline
 
 **Agent Engineer:**
-- [ ] Ingestion Agent: classification prompt working, outputs clean document envelope
-- [ ] Extraction Agent: parses Zoom MSA and returns 15+ fields as structured JSON
-- [ ] Confidence scoring on extraction output working
+- [x] Ingestion Agent: classification prompt working, outputs clean document envelope
+- [x] Extraction Agent: parses Zoom MSA and returns 15+ fields as structured JSON
+- [x] Confidence scoring on extraction output working
 
 **Integration Engineer:**
-- [ ] Redis Hash: Extraction Agent writes contract record, reads correctly
-- [ ] Redis Streams: Ingestion Agent publishes, Extraction Agent subscribes and triggers
-- [ ] Watsonx Orchestrate: workflow dispatches Ingestion → Extraction in sequence
+- [x] Redis Hash: Extraction Agent writes contract record, reads correctly
+- [x] Redis Streams: Ingestion Agent publishes, Extraction Agent subscribes and triggers
+- [x] Watsonx Orchestrate: workflow dispatches Ingestion → Extraction in sequence
 
 **Frontend:**
 - [ ] File upload sends files to backend, receives workflow_id
@@ -70,14 +70,14 @@
 ### Afternoon (1pm–6pm) — Parallel Agents + Decision
 
 **Agent Engineer:**
-- [ ] Risk Agent: reads Redis contract record, produces flags for Zoom scenario
-- [ ] Decision Agent: receives risk report + vendor intel, produces RENEGOTIATE recommendation
-- [ ] Action Agent: generates at minimum negotiation prep sheet and vendor email draft
+- [x] Risk Agent: reads Redis contract record, produces flags for Zoom scenario
+- [x] Decision Agent: receives risk report + vendor intel, produces RENEGOTIATE recommendation
+- [x] Action Agent: generates at minimum negotiation prep sheet and vendor email draft
 
 **Integration Engineer:**
-- [ ] Watsonx Orchestrate: parallel dispatch of Risk Agent + Vendor Research Agent
-- [ ] Vendor Research Agent: Tavily integration returning results for Zoom
-- [ ] Watsonx Orchestrate: routes to Action Agent after Decision Agent completes
+- [x] Watsonx Orchestrate: parallel dispatch of Risk Agent + Vendor Research Agent
+- [x] Vendor Research Agent: Tavily integration returning results for Zoom
+- [x] Watsonx Orchestrate: routes to Action Agent after Decision Agent completes
 - [ ] Confidence routing: flagged field confirmation prompt works end-to-end
 
 **Frontend:**
@@ -97,9 +97,9 @@
 - [ ] Add legal risk flags to Risk Agent
 
 **Integration Engineer:**
-- [ ] Redis audit log writing correctly on workflow completion
-- [ ] Renewal Command Center data: Redis Sorted Set updating on workflow complete
-- [ ] Redis TTL cache for Tavily results
+- [x] Redis audit log writing correctly on workflow completion
+- [x] Renewal Command Center data: Redis Sorted Set updating on workflow complete
+- [x] Redis TTL cache for Tavily results
 
 **Frontend:**
 - [ ] Artifact Approval UI: all 5 artifacts visible, edit + approve flow working

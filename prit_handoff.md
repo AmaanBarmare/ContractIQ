@@ -1,5 +1,7 @@
 # Handoff to Prit — Claude, Orchestrate & Redis Setup
 
+> **Status: COMPLETE.** Prit's orchestration layer has been merged into main (PR #1, commit d8e8bba). All 24 files integrated, all imports verified. The full pipeline — FastAPI, Redis, Tavily, WebSocket, all 6 agents — is wired up and working.
+
 Hey Prit — here's everything you need to pick up from where I left off.
 
 My piece (Agent Engineer): document parser, extraction agent, risk agent, decision agent, Pydantic models, and a pipeline runner script. All code is written, imports cleanly, and passes offline structural tests. The LLM layer now talks to **Anthropic Claude** (not Watsonx.ai — we don't have Runtime access) via the Anthropic SDK.
