@@ -15,83 +15,7 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <div className="font-(family-name:--font-inter) min-h-screen text-[#374151]">
-      {/* ── Global keyframes ── */}
-      <style>{`
-        html{overflow:auto;scrollbar-gutter:stable}
-        body{overflow-x:hidden;background:#F8FAFC}
-
-        @keyframes fadeUp{
-          from{opacity:0;transform:translateY(28px)}
-          to{opacity:1;transform:translateY(0)}
-        }
-        @keyframes fadeIn{
-          from{opacity:0}
-          to{opacity:1}
-        }
-        @keyframes pulseGlow{
-          0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.35)}
-          50%{box-shadow:0 0 0 8px rgba(37,99,235,0)}
-        }
-        @keyframes pulseDot{
-          0%,100%{opacity:1;transform:scale(1)}
-          50%{opacity:.55;transform:scale(1.35)}
-        }
-        @keyframes shimmer{
-          0%{background-position:-200% 0}
-          100%{background-position:200% 0}
-        }
-        @keyframes slideRight{
-          from{width:0}
-          to{width:100%}
-        }
-        @keyframes floatSlow{
-          0%,100%{transform:translateY(0)}
-          50%{transform:translateY(-8px)}
-        }
-
-        .anim-rise{animation:fadeUp .72s cubic-bezier(.22,1,.36,1) both}
-        .anim-fade{animation:fadeIn .6s ease both}
-        .d1{animation-delay:.08s}.d2{animation-delay:.15s}.d3{animation-delay:.22s}
-        .d4{animation-delay:.30s}.d5{animation-delay:.38s}.d6{animation-delay:.46s}
-        .d7{animation-delay:.54s}.d8{animation-delay:.62s}.d9{animation-delay:.70s}
-        .d10{animation-delay:.78s}
-
-        .pulse-dot{animation:pulseDot 2.4s ease-in-out infinite}
-
-        .shimmer-bar{
-          background:linear-gradient(90deg,transparent 0%,rgba(37,99,235,.12) 50%,transparent 100%);
-          background-size:200% 100%;
-          animation:shimmer 3s linear infinite;
-        }
-
-        .float-card{animation:floatSlow 6s ease-in-out infinite}
-        .float-card-alt{animation:floatSlow 6s ease-in-out 1.5s infinite}
-
-        .arch-arrow{
-          background:linear-gradient(180deg,#2563EB,#60A5FA);
-          border-radius:2px;
-        }
-
-        .hero-glow{
-          position:absolute;
-          width:680px;height:680px;
-          border-radius:50%;
-          background:radial-gradient(circle,rgba(37,99,235,.13) 0%,rgba(37,99,235,.04) 40%,transparent 70%);
-          top:-220px;left:50%;transform:translateX(-50%);
-          pointer-events:none;
-          z-index:0;
-        }
-
-        .hero-glow-amber{
-          position:absolute;
-          width:400px;height:400px;
-          border-radius:50%;
-          background:radial-gradient(circle,rgba(245,158,11,.08) 0%,transparent 65%);
-          top:60px;right:-80px;
-          pointer-events:none;
-          z-index:0;
-        }
-      `}</style>
+      {/* Styles moved to globals.css */}
 
       {/* ━━━━━━━━━━━━━━━━━━━ NAV ━━━━━━━━━━━━━━━━━━━ */}
       <nav className="sticky top-0 z-50 border-b border-[#E5E7EB] bg-white/75 backdrop-blur-xl">
@@ -143,17 +67,18 @@ export default function LandingPage() {
 
             <div className="mt-9 flex flex-wrap items-center gap-3.5">
               <a
-                href="#flow"
-                className="inline-flex items-center gap-2 rounded-full bg-[#2563EB] px-6 py-3 text-[14px] font-semibold text-white shadow-lg shadow-blue-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-600/30"
+                href="/dashboard"
+                className="inline-flex items-center gap-2 rounded-full bg-[#2563EB] px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-blue-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-600/30"
+                style={{ animation: "lp-pulseGlow 2.5s ease-in-out infinite" }}
               >
-                See the live workflow
+                Launch Dashboard
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
               </a>
               <a
-                href="#arch"
+                href="#flow"
                 className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-5 py-3 text-[14px] font-semibold text-[#374151] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#D1D5DB] hover:shadow-md"
               >
-                View architecture
+                See the workflow
               </a>
             </div>
 
@@ -963,8 +888,8 @@ export default function LandingPage() {
           </p>
 
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <a href="#flow" className="inline-flex items-center gap-2 rounded-full bg-[#2563EB] px-6 py-3 text-[14px] font-semibold text-white shadow-lg shadow-blue-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl">
-              See the live workflow
+            <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full bg-[#2563EB] px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-blue-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl">
+              Launch Dashboard
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </a>
             <a href="#arch" className="inline-flex items-center gap-2 rounded-full border border-[#334155] px-5 py-3 text-[14px] font-semibold text-[#94A3B8] transition-all hover:border-[#475569] hover:text-white">

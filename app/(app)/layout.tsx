@@ -14,17 +14,17 @@ function MobileTopBar() {
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-4 py-3.5 backdrop-blur-xl lg:hidden">
       <div className="flex items-center justify-between gap-3">
         <Link
-          href="/"
+          href="/dashboard"
           className="font-display shrink-0 text-[0.68rem] font-bold tracking-[0.28em] uppercase text-blue-600"
         >
           ContractIQ
         </Link>
         <nav className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1.5 text-[0.8rem] font-semibold">
           <Link
-            href="/"
-            className={`transition-colors ${pathname === "/" ? "text-gray-900" : "text-gray-400 hover:text-gray-700"}`}
+            href="/dashboard"
+            className={`transition-colors ${pathname === "/dashboard" ? "text-gray-900" : "text-gray-400 hover:text-gray-700"}`}
           >
-            Home
+            Dashboard
           </Link>
           <Link
             href="/renewals"

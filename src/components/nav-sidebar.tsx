@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: "grid" },
+  { href: "/dashboard", label: "Dashboard", icon: "grid" },
   { href: "/renewals", label: "Renewals", icon: "clock" },
 ];
 
@@ -42,7 +42,7 @@ export function NavSidebar() {
         aria-hidden
       />
       <div className="flex min-h-0 flex-1 flex-col pl-0.75 pr-4 pt-9">
-        <Link href="/" className="group ml-2 block">
+        <Link href="/dashboard" className="group ml-2 block">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-200 bg-linear-to-br from-blue-50 to-blue-100 font-display text-sm font-extrabold tracking-tight text-blue-600 shadow-sm">
               CI
@@ -60,10 +60,7 @@ export function NavSidebar() {
 
         <nav className="flex flex-col gap-1.5">
           {navItems.map(({ href, label, icon }) => {
-            const isActive =
-              href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(href);
+            const isActive = pathname === href || pathname.startsWith(href + "/");
 
             return (
               <Link
