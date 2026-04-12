@@ -30,6 +30,8 @@ from app.services.redis_client import (
     publish_agent_event,
     save_artifacts,
     save_contract,
+    save_decision,
+    save_risk_report,
     save_workflow,
     set_renewal_deadline,
 )
@@ -74,6 +76,13 @@ def run_workflow(workflow_id: str, file_paths: list[str]) -> dict:
         _update_status(workflow_id, "EXTRACTING", "extraction_agent")
         contract = run_extraction(merged_text)
         save_contract(workflow_id, contract.model_dump())
+        # Store vendor info in workflow for frontend lookup
+        vendor_name = contract.vendor_name.value or vendor_hint or "Unknown"
+        vendor_id = vendor_name.lower().replace(" ", "_")
+        save_workflow(workflow_id, {
+            "vendor_id": vendor_id,
+            "vendor_name": vendor_name,
+        })
         publish_agent_event(workflow_id, "extraction_agent", "EXTRACTION_COMPLETE", {
             "overall_confidence": contract.overall_confidence,
             "flagged_fields": contract.flagged_fields,
@@ -119,6 +128,7 @@ def run_workflow(workflow_id: str, file_paths: list[str]) -> dict:
                     "reason": "Tavily unavailable or timed out",
                 })
 
+        save_risk_report(workflow_id, risk_report.model_dump())
         result["risk"] = {
             "overall_risk_score": risk_report.overall_risk_score,
             "risk_level": risk_report.risk_level,
@@ -127,6 +137,7 @@ def run_workflow(workflow_id: str, file_paths: list[str]) -> dict:
         # --- Agent 5: Decision ---
         _update_status(workflow_id, "DECIDING", "decision_agent")
         decision = run_decision(contract, risk_report, vendor_intel)
+        save_decision(workflow_id, decision.model_dump())
         publish_agent_event(workflow_id, "decision_agent", "DECISION_COMPLETE", {
             "recommendation": decision.recommendation,
             "confidence": decision.confidence,

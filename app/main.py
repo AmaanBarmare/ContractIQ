@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import artifacts, contracts, documents, qa, renewals, spend, workflows
+from app.routers import artifacts, contracts, decision, documents, qa, renewals, risk, spend, workflows
 from app.websocket.agent_feed import agent_feed_handler
 
 app = FastAPI(
@@ -30,6 +30,8 @@ app.include_router(contracts.router)
 app.include_router(qa.router)
 app.include_router(spend.router)
 app.include_router(renewals.router)
+app.include_router(risk.router)
+app.include_router(decision.router)
 app.include_router(artifacts.router)
 
 

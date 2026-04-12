@@ -95,6 +95,36 @@ def get_artifacts(workflow_id: str) -> Optional[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Risk report helpers
+# ---------------------------------------------------------------------------
+
+def save_risk_report(workflow_id: str, risk_data: dict) -> None:
+    r = get_redis()
+    r.set(f"risk:{workflow_id}", json.dumps(risk_data, default=str), ex=7 * 86400)
+
+
+def get_risk_report(workflow_id: str) -> Optional[dict]:
+    r = get_redis()
+    raw = r.get(f"risk:{workflow_id}")
+    return json.loads(raw) if raw else None
+
+
+# ---------------------------------------------------------------------------
+# Decision helpers
+# ---------------------------------------------------------------------------
+
+def save_decision(workflow_id: str, decision_data: dict) -> None:
+    r = get_redis()
+    r.set(f"decision:{workflow_id}", json.dumps(decision_data, default=str), ex=7 * 86400)
+
+
+def get_decision(workflow_id: str) -> Optional[dict]:
+    r = get_redis()
+    raw = r.get(f"decision:{workflow_id}")
+    return json.loads(raw) if raw else None
+
+
+# ---------------------------------------------------------------------------
 # Vendor research cache
 # ---------------------------------------------------------------------------
 
