@@ -1,8 +1,8 @@
-# ContractIQ — Hackathon Demo Script
+# ContractIQ — 10-Minute Demo Script
 
 **Enterprise Agents Hackathon — IBM Watsonx Orchestrate · Redis · Tavily**
 **Demo: Sunday April 12, 5:00–6:00 PM ET via Zoom**
-**Total demo time: 5 minutes**
+**Total demo time: 10 minutes**
 
 ---
 
@@ -31,33 +31,64 @@ curl -s http://localhost:8000/api/renewals/urgent | jq .count
 **Have ready:**
 - Browser open to `http://localhost:3000`
 - 4 Zoom demo files from `scripts/demo_data/zoom/` in a Finder window, ready to drag
+- Code editor open to `app/agents/risk.py` and `app/orchestrator/orchestrate.py`
 - Backup video at `scripts/demo_data/backup_demo.mp4` — if anything crashes, switch immediately, no apology
 
 ---
 
-## The Demo (5 Minutes)
-
-### 0:00–0:30 — The Problem
+## 1. The Problem (0:00–2:00)
 
 **On screen:** Landing page (`localhost:3000`)
 
-> "67% of procurement teams miss at least one contract auto-renewal every quarter. That's $135 billion lost annually across North America — not because teams don't care, but because the work is buried in PDFs, spreadsheets, and email chains."
+> "Let me start with a number: **$135 billion.**"
 >
-> "ContractIQ fixes this. Six specialized AI agents, orchestrated by IBM Watsonx Orchestrate, turn a stack of contract documents into a complete renegotiation decision package — in under 90 seconds."
-
-**Click "Launch Dashboard"** to navigate to the dashboard.
+> "That's how much North American companies lose every year to unwanted contract auto-renewals. Not because procurement teams don't care — but because the work is invisible. It's buried in PDFs, scattered across Google Drive, tracked in spreadsheets no one updates."
+>
+> "67% of procurement teams miss at least one auto-renewal every quarter. The average manager spends **14 hours a week** just reviewing contracts and chasing renewal dates. And when a renewal does get flagged, producing a decision package — a brief, a CFO summary, a vendor email, a negotiation strategy — takes **2 to 5 business days**."
+>
+> "Meanwhile, the clock is ticking. Most contracts have a 30-to-60-day notice window. If you miss it, you're locked in for another year at whatever price the vendor wants."
+>
+> "This is the problem ContractIQ solves. The same work that takes a team 2 to 5 days — we do in under **90 seconds**."
 
 ---
 
-### 0:30–1:00 — The Dashboard & Upload
+## 2. The Tech Stack (2:00–5:00)
 
-**On screen:** Dashboard with stats, agent runway, and upload panel
+**On screen:** Landing page or architecture diagram
 
-> "This is the procurement command center. You can see total spend tracked, number of vendors, and urgent renewals flagged."
+> "Before I show you the product, I want to explain what's actually running under the hood — because the technology choices here are deliberate, not default."
 
-**Point to the six-agent runway strip:**
+### IBM Watsonx Orchestrate
 
-> "These six agents are the core of ContractIQ. Each one owns exactly one responsibility — that's what makes confidence scoring meaningful and the live feed genuinely useful."
+> "ContractIQ is built on six specialized AI agents. Each agent owns exactly one responsibility — ingest, extract, assess risk, research the vendor, make a decision, generate artifacts. The thing that coordinates all of them is **IBM Watsonx Orchestrate**."
+>
+> "Orchestrate does three things we couldn't easily replicate ourselves. First, it manages parallel execution — the Risk agent and the Vendor Research agent fire simultaneously, cutting total runtime in half. Second, it enforces confidence thresholds as **workflow states**, not code conditionals — so a bug in our Python can't accidentally bypass a guardrail. Third, it owns the artifact approval gate — nothing external fires until a human explicitly approves, and that's an Orchestrate constraint, not an `if` statement we could accidentally delete."
+
+### Redis
+
+> "Redis is running **five distinct roles** in this system — and I want to be specific, because this is not 'Redis as a cache.'"
+>
+> "Hashes are the source of truth for every contract and workflow. Streams are the inter-agent message bus — every agent publishes events to the same stream the UI reads from, so the Live Agent Feed you're about to see isn't a separate notification system, it's the actual pipeline data. Sorted Sets track renewal deadlines for the urgency queue. JSON keys with 24-hour TTLs cache vendor research so we don't re-query Tavily for the same vendor twice in a day. And the audit log is an append-only Stream — every action, timestamped, with a user ID and content hash. If you restarted the backend mid-workflow, the next agent would resume from the last completed step because the state lives in Redis, not in memory."
+
+### Tavily
+
+> "The Vendor Research agent calls **Tavily** through Watsonx Orchestrate's tool framework. Four scoped queries per vendor: company health, pricing benchmarks, security incidents, and competitive alternatives. Tavily returns structured, citation-rich results — not SEO-heavy web pages. And because it's accessed through Orchestrate, every external call is governed and auditable. Our agents never hit an external API directly."
+
+> "The architecture in one sentence: **Watsonx orchestrates. Redis wires. Tavily grounds. Claude reasons.**"
+
+---
+
+## 3. Live Demo + Code (5:00–10:00)
+
+### Demo (5:00–8:00)
+
+**Navigate to the dashboard.**
+
+> "This is the procurement command center. You can see total spend tracked, vendors under management, and urgent renewals already flagged."
+
+**Point to the six-agent runway strip.**
+
+> "These are the six agents. They're idle right now. Let me give them something to do."
 
 **Drag and drop the 4 Zoom files into the upload panel:**
 
@@ -66,139 +97,77 @@ curl -s http://localhost:8000/api/renewals/urgent | jq .count
 3. `Zoom Security & Privacy Addendum.docx` — SUPPORTING EXHIBIT
 4. `Zoom Redlines from Legal.pdf` — NEGOTIATION HISTORY
 
-> "Four documents. Master agreement, order form, security addendum, and redlines from legal. Let's drop them in and watch what happens."
+> "Four documents — the master services agreement, the order form, the security addendum, and redlines from legal. Real contract documents. Let's drop them in."
 
-**Click "Run renewal rescue"** — browser navigates to the workflow pipeline page.
+**Click "Run Renewal Rescue."**
 
----
-
-### 1:00–1:45 — Agents Running (Ingestion + Extraction)
-
-**On screen:** Pipeline view with six step indicators and the Live Agent Feed
-
-> "IBM Watsonx Orchestrate just dispatched the first agent."
+> "Watsonx Orchestrate just dispatched Agent 1."
 
 **Step 1 lights up — Ingestion Agent:**
 
-> "The Ingestion Agent classified all four documents in about 8 seconds — it identified the MSA, order form, addendum, and redlines, and linked them to the Zoom vendor workspace."
+> "8 seconds. All four documents classified, linked to the Zoom vendor workspace, metadata extracted."
 
-**Step 2 lights up — Extraction Agent:**
+**Step 2 — Extraction Agent:**
 
-> "Now the Extraction Agent is pulling key terms. It parses 38+ structured fields — vendor name, contract value, renewal date, auto-renewal clause, notice period, termination rights, everything."
+> "Now the Extraction agent is pulling 38+ structured fields. Watch the Live Agent Feed — every line here is an event on a Redis Stream."
 
-**Watch for the confidence prompt** (notice period flagged at ~58%):
+**Watch for the confidence prompt (notice period flagged at ~58%):**
 
-> "Here's the first guardrail. The notice period extracted at 58% confidence — below our 70% threshold. The pipeline doesn't block entirely. The other 37 fields at 95%+ confidence flow forward immediately. Only this one uncertain field pauses for human confirmation."
+> "Here's the first guardrail. Notice period extracted at 58% confidence — below our 70% threshold. The pipeline doesn't stop. The other 37 fields at 95%+ flow forward immediately. Only this one uncertain field pauses."
 
 **Click "Confirm 60 days":**
 
-> "I confirm 60 days. That correction is stored with `confirmed_by_user: true` and the pipeline resumes. This is Layer 2 of our four-layer guardrail system — confidence threshold routing enforced by Watsonx Orchestrate."
+> "I confirm 60 days. That correction is stored with `confirmed_by_user: true` and we resume. This is Layer 2 of our four-layer guardrail system."
 
----
+**Steps 3 and 4 activate simultaneously:**
 
-### 1:45–2:30 — Risk & Research (Parallel Execution)
+> "Now Watsonx fires two agents in parallel. Risk agent is scoring the contract — it finds 4 flags, 2 critical: auto-renewal active with 34 days left, no termination for convenience clause. Risk score: 74 out of 100."
+>
+> "At the same time, Vendor Research is hitting Tavily. Zoom's pricing is above market. Microsoft Teams and Google Meet are alternatives — ones this company may already be licensed for."
 
-**On screen:** Steps 3 and 4 both activating
+**Step 5 — Decision Agent:**
 
-> "Now something interesting happens — Watsonx Orchestrate fires two agents in parallel."
+> "Decision agent synthesizes everything. RENEGOTIATE. 91% confidence. Urgency: CRITICAL. That's above the 80% auto-proceed threshold, so Orchestrate routes directly to generation."
 
-**Step 3 — Risk & Compliance Agent:**
+**Step 6 — Generation Agent. Artifacts appear:**
 
-> "The Risk Agent analyzes the extracted contract against compliance rules. It finds 4 flags — 2 critical, 2 high. Auto-renewal is active with only 34 days left. No termination for convenience clause. Overall risk score: 74 out of 100."
+> "Five artifacts in under 15 seconds. Renewal Brief, Negotiation Prep Sheet, Vendor Outreach Email, CFO Summary, Action Checklist. Every single one is marked Draft — Pending Approval."
 
-**Step 4 — Vendor Research Agent (Tavily):**
+**Click through the Negotiation Prep Sheet:**
 
-> "At the same time, the Vendor Research Agent is calling Tavily — through Watsonx Orchestrate's `vasco-tavily` tool — to pull real-time market intelligence. Four scoped queries: company health, security incidents, pricing benchmarks, and competitive alternatives."
-
-**Point to Tavily results appearing in the feed:**
-
-> "Tavily returns structured, citation-rich data. It found that Zoom's pricing is above market. Microsoft Teams and Google Meet are identified as alternatives the company may already be licensed for. This is live data — not a static database. Every vendor research result is cached in Redis with a 24-hour TTL."
-
----
-
-### 2:30–3:00 — The Decision
-
-**On screen:** Step 5 activates, then the Decision card appears
-
-> "The Decision Agent synthesizes everything — risk report, vendor intelligence, extracted terms, spend data."
-
-**Decision card renders:**
-
-| Field | Value |
-|---|---|
-| Recommendation | **RENEGOTIATE** |
-| Confidence | **91%** |
-| Urgency | **CRITICAL** |
-| Days to act | **34** |
-
-> "RENEGOTIATE at 91% confidence. That's above the 80% auto-proceed threshold, so Watsonx Orchestrate routes directly to artifact generation — no human escalation needed. If this had been 75%, it would have paused for a senior reviewer."
-
----
-
-### 3:00–3:45 — Artifacts & Approval Gate
-
-**On screen:** Step 6 — Generation Agent produces 5 artifacts
-
-> "The Generation Agent drafts five stakeholder-ready artifacts. Every single one is marked Draft — Pending Approval."
-
-**Click through the artifact tabs:**
-
-1. **Renewal Brief** — 2-page summary of the contract, risk flags, timeline, and recommended action
-2. **Negotiation Prep Sheet** — leverage points pulled from Tavily (pricing benchmark, Zoom's slowing growth, free alternatives), legal considerations, key renewal terms
-3. **Vendor Outreach Email** — ready-to-send template for the Zoom account rep, with personalization fields
-4. **CFO Summary** — spend context, risk materiality, and projected savings from renegotiation
-5. **Action Checklist** — who does what, by when, to execute the renegotiation
-
-> "Notice the Negotiation Prep Sheet — Tavily pulled specific leverage points. Zoom had a pricing increase in Q2 2026. Teams and Meet are free alternatives the company may already pay for. This is real-time grounding, not hallucinated data."
-
-**Edit the vendor outreach email** (personalize the greeting or a sentence):
-
-> "I can edit any artifact before approving. Let me personalize this email."
+> "Look at this — Tavily found that Zoom had a pricing increase in Q2 2026. Teams and Meet are free. These are live leverage points, not hallucinated data."
 
 **Click "Approve All":**
 
-> "Now I approve. This is Layer 3 — the artifact approval gate, enforced by Watsonx Orchestrate as a workflow state, not a conditional in code. Nothing external — no email, no escalation, no sharing — fires until this button is clicked. The approval is logged to Redis's append-only audit stream with a timestamp, user ID, and content hash."
+> "Layer 3. The approval gate. Enforced by Orchestrate as a workflow state. Nothing external fires until this button is clicked. The approval is logged to the Redis audit stream with a timestamp, user ID, and content hash."
+
+> "Start to finish: **75 seconds.** What a team would spend 2 to 5 days on."
 
 ---
 
-### 3:45–4:15 — Architecture Callout
+### Code (8:00–10:00)
 
-**On screen:** Completed workflow with all 6 steps checked
+**Pull up `app/agents/risk.py` and `app/orchestrator/orchestrate.py` in the editor.**
 
-> "Let me show you what just happened under the hood."
+> "Let me show you what's actually running."
 
-**Point to the Live Agent Feed:**
+**Show the agent structure:**
 
-> "Every line in this feed is an event published to a Redis Stream. The same stream the agents write to is the one the UI reads from — there's no separate notification system. You could replay this entire workflow from the Redis audit log."
+> "Each agent is a single Python file. The Risk agent reads the contract record from Redis, runs it through Claude with a structured prompt, and publishes its output back to the Redis Stream. That's it. The agent doesn't know what runs before or after it — that's Orchestrate's job."
 
-**Architecture summary:**
+**Show the Redis Stream publish call:**
 
-> "Six specialized agents. One orchestrator — IBM Watsonx Orchestrate — coordinating every handoff, enforcing confidence thresholds, and governing the approval gate."
+> "Every agent ends with a call to `redis.xadd('agent_events', {...})`. That single line is what populates the Live Agent Feed. There's no separate WebSocket payload, no notification system — the UI subscribes to the same stream the agents write to."
+
+**Show the Orchestrate confidence routing in `orchestrate.py`:**
+
+> "Here's the confidence routing table. If the Decision agent returns confidence above 0.80, Orchestrate routes to Generation automatically. Below 0.80, it pauses for a senior reviewer. This logic lives in the workflow definition, not in application code — which means it can't be bypassed by a code bug, and it can be changed without a redeploy."
+
+**Close:**
+
+> "ContractIQ isn't a chatbot. It's not a search box. It's a **multi-agent procurement operating system** — agents that detect risk, ground decisions in real-time data, and generate every artifact a team needs, with humans in control at every step."
 >
-> "Redis ran three critical roles: the inter-agent message bus via Streams, the state store for all contract data via Hashes, and the real-time cache for Tavily results with automatic TTL expiry."
->
-> "Tavily provided live vendor intelligence — pricing benchmarks, competitive landscape, company health — accessed through Watsonx Orchestrate's tool framework."
-
----
-
-### 4:15–5:00 — Business Impact & Close
-
-> "Let's talk about what this replaces."
->
-> "Without ContractIQ, this Zoom renewal would have taken: 3 hours of manual contract review, a legal consult, independent pricing research, and 4 documents drafted from scratch. Calendar time? 2 to 5 business days. We did it in 75 seconds."
-
-**Key numbers:**
-
-> "For a typical 3-person procurement team managing 300 contracts:"
->
-> - "12 hours per week recovered per manager — that's **$153,000** in productivity annually."
-> - "Auto-renewal misses prevented — **$72,000** saved."
-> - "Renegotiation savings from Tavily-grounded benchmarks — 12–18% on flagged contracts, roughly **$60,000**."
-> - "Total annual value: **$315,000**. Payback period: **under 6 weeks**."
-
-**Closing line:**
-
-> "ContractIQ is not a chatbot. Not a search box. It's a multi-agent procurement operating system that detects risk, recommends action, and generates every artifact a team needs — with humans in control at every step."
+> "Six agents. One orchestrator. Full audit trail. $315,000 net annual ROI. Payback in under six weeks."
 
 ---
 
@@ -235,7 +204,7 @@ curl -s http://localhost:8000/api/renewals/urgent | jq .count
 | Failure | Recovery |
 |---|---|
 | **Demo crashes entirely** | Switch to backup video immediately. No apology. "Let me show you the recording of a full run." |
-| **Tavily is slow / no results** | "The cache missed — you're seeing a live API call through Watily via Orchestrate. This is the real integration, not a mock." |
+| **Tavily is slow / no results** | "The cache missed — you're seeing a live API call through Tavily via Orchestrate. This is the real integration, not a mock." |
 | **Orchestrate latency** | Narrate the agent steps while waiting. "Watsonx is coordinating the handoff between Risk and Research — they're running in parallel." |
 | **Confidence prompt doesn't fire** | "Confidence routing would normally pause here for human confirmation. The extraction was high-confidence on this run." |
 | **Redis connection drops** | `docker start contractiq-redis`, refresh. If > 10 seconds, switch to backup video. |
@@ -254,3 +223,5 @@ curl -s http://localhost:8000/api/renewals/urgent | jq .count
 | **ROI close** | "$315,000 annual value. Under 6 weeks to payback." |
 | **Guardrail line** | "Nothing external fires until the user approves." |
 | **Why six agents** | "One agent per responsibility. That's what makes confidence scoring meaningful and the live feed genuinely useful." |
+| **Why Redis** | "Five roles — source of truth, message bus, urgency queue, research cache, audit log. Not just a cache." |
+| **Why Tavily** | "Live leverage points, not hallucinated data." |
