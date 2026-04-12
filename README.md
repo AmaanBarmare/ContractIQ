@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ContractIQ
 
-## Getting Started
+ContractIQ is a hackathon project for procurement teams dealing with SaaS renewals. The repo now includes:
 
-First, run the development server:
+- a polished single-page Next.js demo frontend
+- backend architecture, API contracts, agent specs, and workflow docs
+- FastAPI-oriented backend source directories and models from the orchestration workstream
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The main demo flow is:
+
+1. upload a vendor packet
+2. extract key contract terms
+3. surface renewal risk
+4. recommend an action
+5. review negotiation artifacts
+
+The frontend is optimized for a Zoom renewal scenario and automatically falls back to a built-in demo mode if backend workflow calls are unavailable.
+
+## Repo Layout
+
+```text
+ContractIQ/
+├── src/                     # Next.js frontend app
+├── public/                  # Frontend static assets
+├── app/                     # Backend source package
+├── api/                     # Backend API reference
+├── agents/                  # Agent design docs
+├── workflows/               # Workflow design docs
+├── modules/                 # Extraction/risk module docs
+├── docs/                    # Demo guide and project context
+├── package.json             # Frontend package manifest
+└── requirements.txt         # Backend Python dependencies
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Frontend Demo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Install frontend dependencies:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+```
 
-## Learn More
+Run the demo frontend:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+PORT=3003 npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3003](http://localhost:3003).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Backend Integration
 
-## Deploy on Vercel
+The frontend is configured to call a backend at:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+http://localhost:8000
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+It expects the workflow-oriented endpoints documented in [api/API_REFERENCE.md](api/API_REFERENCE.md), including:
+
+- `POST /api/workflows`
+- `POST /api/workflows/{workflow_id}/documents`
+- `GET /api/workflows/{workflow_id}`
+- `GET /api/contracts/{vendor_id}`
+- `GET /api/workflows/{workflow_id}/decision`
+- `GET /api/workflows/{workflow_id}/artifacts`
+
+If those endpoints are not available, the UI automatically switches to a reliable Zoom demo state so the live walkthrough still works.
+
+## Demo Notes
+
+- The default polished scenario is a Zoom renewal packet.
+- The page is intentionally single-page and demo-first.
+- Recommendation, agent feed, contract summary, and artifact review stay coherent in fallback mode.
+
+## Key Files
+
+- `src/app/page.tsx`
+  Single-page dashboard composition.
+- `src/hooks/use-workflow.ts`
+  Frontend orchestration hook for workflow creation, upload, polling, and fallback.
+- `src/lib/api-client.ts`
+  Typed frontend client for backend calls.
+- `src/lib/adapters.ts`
+  Adapter boundary between raw backend responses and UI models.
+- `src/lib/mock-data.ts`
+  Zoom-first demo scenario and deterministic fallback content.
+
+## Supporting Docs
+
+- [api/API_REFERENCE.md](api/API_REFERENCE.md)
+- [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md)
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [TECH_STACK.md](TECH_STACK.md)
