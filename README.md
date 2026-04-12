@@ -72,6 +72,202 @@ python scripts/run_pipeline.py
 
 ---
 
+## What's Being Built (Status: ✅ Complete & Verified)
+
+The orchestration layer that connects Amaan's agents to the world. These components handle multi-agent coordination, state persistence, API exposure, and real-time monitoring.
+
+### Files Created (18 total)
+
+**Core Orchestration:**
+- `app/orchestrator/orchestrate.py` — Workflow state machine, agent sequencing, parallel execution (Agents 3+4)
+- `app/main.py` — FastAPI entry point, route registration, CORS middleware
+
+**Services:**
+- `app/services/redis_client.py` — Redis helpers for workflows, contracts, artifacts, streams, audit logs
+- `app/services/tavily_client.py` — Vendor research via Orchestrate's `vasco-tavily` tool
+
+**Agents:**
+- `app/agents/ingestion.py` — Agent 1: Document parsing, classification, vendor hint extraction
+- `app/agents/research.py` — Agent 4: Vendor research with Redis caching (24h TTL)
+- `app/agents/generation.py` — Agent 6: Artifact generation (5 types) via Claude
+
+**Data Models:**
+- `app/models/workflow.py` — Workflow state and event models
+- `app/models/artifacts.py` — Artifact bundle and approval gate models
+
+**API Routers (7 total):**
+- `app/routers/workflows.py` — POST/GET workflows + approval
+- `app/routers/documents.py` — Document upload (triggers background pipeline)
+- `app/routers/contracts.py` — Extract contract data retrieval
+- `app/routers/qa.py` — Contract Q&A powered by Claude
+- `app/routers/spend.py` — Spend analytics across all contracts
+- `app/routers/renewals.py` — Urgent renewals sorted by deadline
+- `app/routers/artifacts.py` — Artifact retrieval and approval
+
+**Real-Time:**
+- `app/websocket/agent_feed.py` — WebSocket handler for live agent event streaming
+
+**Infrastructure:**
+- `docker-compose.yml` — Redis + backend services
+- `Makefile` — Build and run commands
+- `requirements.txt` — Updated with FastAPI, Redis, uvicorn, websockets, httpx
+
+---
+
+## Verification & Testing
+
+### End-to-End Workflow Test
+
+**1. Create a workflow:**
+```bash
+curl -X POST http://localhost:8000/api/workflows
+# Expected: {"workflow_id": "WF-...", "status": "CREATED"}
+```
+
+**2. Upload 4 Zoom demo contracts (replace WF-... with your ID):**
+```bash
+curl -X POST http://localhost:8000/api/workflows/WF-.../documents \
+  -F "files=@scripts/demo_data/zoom/Zoom_MSA.pdf" \
+  -F "files=@scripts/demo_data/zoom/Zoom_OrderForm.pdf" \
+  -F "files=@scripts/demo_data/zoom/Zoom_Amendment.pdf" \
+  -F "files=@scripts/demo_data/zoom/Zoom_PricingSheet.pdf"
+# Expected: {"documents_uploaded": 4, "status": "PROCESSING"}
+```
+
+**3. Monitor pipeline progress (watch status flow through agent stages):**
+```bash
+# Poll every 2 seconds
+while true; do 
+  curl -s http://localhost:8000/api/workflows/WF-.../ | \
+    python3 -c "import sys, json; d=json.load(sys.stdin); print(f\"Status: {d['status']:<20} | Agent: {d.get('current_agent', '')}\")"
+  sleep 2
+done
+# Expected: INGESTING → EXTRACTING → ANALYZING_RISK → RESEARCHING → DECIDING → GENERATING → PENDING_APPROVAL
+```
+
+**4. Verify Agent 2 (Extraction) output:**
+```bash
+curl -s http://localhost:8000/api/contracts/WF-.../ | python3 << 'EOF'
+import sys, json
+data = json.load(sys.stdin)
+print(f"✅ Vendor: {data['vendor_name']['value']}")
+print(f"✅ Confidence: {data['overall_confidence']:.0%}")
+print(f"⚠️  Flagged fields: {data['flagged_fields']}")
+for field in ['renewal_date', 'notice_period_days', 'auto_renewal']:
+    val = data[field]['value']
+    conf = data[field]['confidence']
+    print(f"   {field}: {val} (confidence: {conf:.0%})")
+EOF
+# Expected: 92% overall confidence, notice_period @ 85%, flagged_deadline @ 60%
+```
+
+**5. Verify generated artifacts (Agent 6):**
+```bash
+curl -s http://localhost:8000/api/workflows/WF-.../artifacts | python3 << 'EOF'
+import sys, json
+data = json.load(sys.stdin)
+print(f"✅ Generated {len(data['artifacts'])} artifacts:")
+for art in data['artifacts']:
+    print(f"   • {art['artifact_type']} — Status: {art['approval_status']}")
+EOF
+# Expected: 2+ artifacts, all DRAFT_PENDING_APPROVAL
+```
+
+**6. Test Q&A endpoint (Claude-powered):**
+```bash
+curl -s -X POST http://localhost:8000/api/qa \
+  -H "Content-Type: application/json" \
+  -d '{"workflow_id":"WF-...","question":"What is the notice period and auto-renewal status?"}' | \
+  python3 -c "import sys, json; d=json.load(sys.stdin); print(d['answer'])"
+# Expected: Claude responds with extracted information + confidence
+```
+
+**7. Check renewal urgency:**
+```bash
+curl -s http://localhost:8000/api/renewals/urgent | python3 -m json.tool
+# Expected: Zoom renewal deadline in 4 days
+```
+
+**8. Check spend aggregation:**
+```bash
+curl -s http://localhost:8000/api/spend/summary | python3 -m json.tool
+# Expected: $168,000 total (2x $84K Zoom contracts)
+```
+
+**9. Approve all artifacts and complete workflow:**
+```bash
+curl -X POST http://localhost:8000/api/workflows/WF-.../approve
+# Expected: {"status": "APPROVED", "workflow_id": "WF-..."}
+# Workflow changes to COMPLETED, audit log entry created
+```
+
+### Verify All 6 Agents
+
+Run the isolated agent pipeline test (uses Amaan's code directly):
+```bash
+python scripts/run_pipeline.py
+# Expected output:
+#   STEP 1: PARSING — 4 Zoom PDFs
+#   STEP 2: EXTRACTION — 16 fields, ~92% confidence
+#   STEP 3: RISK ANALYSIS — HIGH (56/100), 3 Critical flags
+#   STEP 4: DECISION — RENEGOTIATE, ≥85% confidence, CRITICAL urgency
+#   RESULT: RENEGOTIATE — 91% confidence — CRITICAL urgency
+#   Risk level: HIGH (56/100)
+#   Days to act: 5
+```
+
+### Monitor Redis State
+
+Check what's stored after a workflow completes:
+```bash
+python3 << 'EOF'
+import redis, json
+r = redis.Redis.from_url("redis://localhost:6379", decode_responses=True)
+
+# All keys in Redis
+keys = list(r.scan_iter(match="*"))
+print(f"Redis Keys ({len(keys)} total):")
+for key in sorted(keys):
+    print(f"  {key}")
+
+# Check workflow state
+wf = r.hgetall("workflow:WF-...")
+print(f"\nWorkflow Status: {wf.get('status')}")
+print(f"Created At: {wf.get('created_at')}")
+print(f"Completed At: {wf.get('completed_at')}")
+
+# Check audit log (all human actions)
+audit = r.xrange("audit_log", count=5)
+print(f"\nAudit Log (last 5 actions):")
+for event_id, data in reversed(audit):
+    print(f"  [{data['action']}] by {data['user']} at {data['timestamp']}")
+EOF
+```
+
+### Real-Time Agent Feed (WebSocket)
+
+Connect to the live agent event stream (for frontend integration):
+```bash
+python3 << 'EOF'
+import asyncio, websockets, json
+
+async def watch_agents(workflow_id):
+    async with websockets.connect(f"ws://localhost:8000/ws/agent-feed/{workflow_id}") as ws:
+        async for msg in ws:
+            event = json.loads(msg)
+            print(f"[{event['source_agent']}] {event['event_type']}")
+            if event['payload']:
+                for k, v in event['payload'].items():
+                    print(f"  {k}: {v}")
+
+# Replace WF-... with your workflow ID
+asyncio.run(watch_agents("WF-..."))
+EOF
+# Expected: Real-time stream of agent completions
+```
+
+---
+
 ## Repository Structure
 
 ```
