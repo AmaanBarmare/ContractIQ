@@ -6,9 +6,9 @@ import type { UploadItem } from "@/lib/types";
 import { UiWorkflowPhase } from "@/lib/workflow-state";
 
 const statusStyles: Record<UploadItem["status"], string> = {
-  Ready: "bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-400/35",
-  Scanning: "bg-orange-500/15 text-orange-100 ring-1 ring-orange-400/35",
-  Flagged: "bg-rose-500/15 text-rose-100 ring-1 ring-rose-400/35",
+  Ready: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+  Scanning: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+  Flagged: "bg-red-50 text-red-700 ring-1 ring-red-200",
 };
 
 const formatFileSize = (size: number) => {
@@ -129,11 +129,11 @@ export function UploadPanel({
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="eyebrow">Start here</p>
-          <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-zinc-500">Intake</p>
-          <h2 className="font-display mt-2 text-2xl font-bold tracking-tight text-white sm:text-[1.85rem]">
+          <p className="mt-3 text-xs font-bold uppercase tracking-widest text-gray-400">Intake</p>
+          <h2 className="font-display mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-[1.85rem]">
             Drop the vendor packet
           </h2>
-          <p className="mt-2 max-w-md text-sm leading-relaxed text-zinc-500">
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-gray-500">
             This single action is what you point at on stage — everything downstream is automated orchestration + streamed
             events.
           </p>
@@ -158,24 +158,24 @@ export function UploadPanel({
         onDrop={handleDrop}
         className={`drop-brackets mt-8 cursor-pointer rounded-2xl border-2 border-dashed px-5 py-12 text-center transition-all duration-200 ${
           isDragging
-            ? "drop-brackets-active border-orange-400/70 bg-gradient-to-b from-orange-500/15 to-teal-500/10 shadow-[0_0_0_1px_rgba(251,146,60,0.25)]"
-            : "border-teal-500/35 bg-gradient-to-b from-teal-500/10 to-transparent hover:border-teal-400/55"
+            ? "drop-brackets-active border-amber-400 bg-linear-to-b from-amber-50 to-blue-50 shadow-[0_0_0_1px_rgba(245,158,11,0.2)]"
+            : "border-blue-300 bg-linear-to-b from-blue-50/60 to-transparent hover:border-blue-400"
         }`}
       >
-        <p className="text-base font-bold text-teal-100">Release files to begin</p>
-        <p className="mt-2 text-sm text-zinc-500">PDF or DOCX · up to 25 MB each</p>
+        <p className="text-base font-bold text-gray-700">Release files to begin</p>
+        <p className="mt-2 text-sm text-gray-400">PDF or DOCX · up to 25 MB each</p>
       </div>
 
       <div className="mt-6 space-y-3">
         {uploadedItems.map((item) => (
           <div
             key={item.name}
-            className="rounded-xl border border-white/10 bg-zinc-950/50 p-4 transition-colors hover:border-white/15"
+            className="rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-white">{item.name}</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-600">
+                <p className="truncate text-sm font-semibold text-gray-900">{item.name}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-gray-400">
                   {item.type} · {item.size}
                 </p>
               </div>
@@ -189,16 +189,16 @@ export function UploadPanel({
         ))}
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-white/10 pt-6">
+      <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-200 pt-6">
         <button
           type="button"
           onClick={() => startWorkflow(selectedFiles)}
           disabled={selectedFiles.length === 0 || isWorking}
-          className="btn-primary min-w-[11rem]"
+          className="btn-primary min-w-44"
         >
           {buttonLabelForPhase(workflowPhase)}
         </button>
-        <p className="max-w-md text-sm text-zinc-500">
+        <p className="max-w-md text-sm text-gray-500">
           {selectedFiles.length > 0
             ? `${selectedFiles.length} file${selectedFiles.length > 1 ? "s" : ""} staged — next screen is your judge moment.`
             : "Select files to create a workflow and open the live pipeline view."}
@@ -206,7 +206,7 @@ export function UploadPanel({
       </div>
 
       {errorMessage ? (
-        <div className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {errorMessage}
         </div>
       ) : null}

@@ -14,7 +14,7 @@ export function ArtifactReviewPanel({
   return (
     <section className="panel-surface h-full">
       <p className="eyebrow">Artifact review</p>
-      <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-zinc-600">
+      <p className="mt-3 text-xs font-bold uppercase tracking-widest text-gray-400">
         Step 5 · Review and approve
       </p>
       <h2 className="panel-title">Approval-ready outputs</h2>
@@ -24,16 +24,16 @@ export function ArtifactReviewPanel({
       </p>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
-        <div className="glass-subtle rounded-[26px] p-5">
+        <div className="glass-subtle rounded-2xl p-5">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-gray-900">
               Negotiation talking points
             </h3>
             <span
               className={`rounded-full border px-3 py-1 text-xs font-medium ${
                 isApproved
-                  ? "border-emerald-300/30 bg-emerald-400/10 text-emerald-100"
-                  : "border-amber-300/30 bg-amber-400/10 text-amber-100"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  : "border-amber-200 bg-amber-50 text-amber-700"
               }`}
             >
               {artifactPack.approvalStatus}
@@ -43,7 +43,7 @@ export function ArtifactReviewPanel({
             {artifactPack.negotiationPoints.map((point, idx) => (
               <div
                 key={idx}
-                className="rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm leading-6 text-slate-200"
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-gray-700"
               >
                 {point}
               </div>
@@ -51,22 +51,22 @@ export function ArtifactReviewPanel({
           </div>
         </div>
 
-        <div className="rounded-[26px] border border-teal-500/25 bg-gradient-to-b from-teal-500/10 to-zinc-950/80 p-5 shadow-[0_22px_60px_rgba(13,148,136,0.18)]">
+        <div className="rounded-2xl border border-blue-200 bg-linear-to-b from-blue-50/60 to-white p-5 shadow-sm">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="text-lg font-semibold text-white">Draft vendor email</h3>
-            <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1 text-xs font-medium text-slate-200">
+            <h3 className="text-lg font-semibold text-gray-900">Draft vendor email</h3>
+            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-gray-500">
               {isApproved ? "Approved" : "Draft ready"}
             </span>
           </div>
-          <div className="mt-4 rounded-2xl border border-white/10 bg-zinc-950/70 p-5">
-            <pre className="whitespace-pre-wrap font-mono text-[0.8125rem] leading-relaxed text-zinc-200">
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5">
+            <pre className="whitespace-pre-wrap font-mono text-[0.8125rem] leading-relaxed text-gray-700">
               {artifactPack.draftEmail}
             </pre>
           </div>
 
           <div className="mt-5 flex flex-wrap gap-3">
             {isApproved ? (
-              <span className="rounded-full border border-emerald-400/25 bg-emerald-500/15 px-5 py-2.5 text-sm font-semibold text-emerald-100">
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-700">
                 Approved
               </span>
             ) : (

@@ -46,35 +46,35 @@ export default function DashboardPage() {
 
   return (
     <div className="page-shell max-w-6xl">
-      <div className="relative mb-12 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-zinc-900/90 via-zinc-950 to-black p-5 sm:p-8 lg:p-10">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-orange-500/15 blur-3xl" />
+      <div className="relative mb-12 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8 lg:p-10">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-amber-100/50 blur-3xl" />
         <div className="relative grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,22rem)] lg:items-start">
           <div className="min-w-0">
             <p className="eyebrow">Renewal rescue · demo mode</p>
-            <h1 className="font-display mt-4 text-balance text-[clamp(1.875rem,4vw+1rem,3.15rem)] font-bold leading-[1.08] tracking-[-0.025em] text-white sm:mt-5">
+            <h1 className="font-display mt-4 text-balance text-[clamp(1.875rem,4vw+1rem,3.15rem)] font-bold leading-[1.08] tracking-tight text-gray-900 sm:mt-5">
               <span className="block sm:inline">Turn a file drop</span>{" "}
               <span className="block sm:inline">
                 into a{" "}
-                <span className="bg-linear-to-r from-teal-200 to-teal-400/90 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                   board-ready decision.
                 </span>
               </span>
             </h1>
-            <p className="mt-5 max-w-xl text-pretty text-[0.9375rem] leading-relaxed text-zinc-400 sm:mt-6 sm:text-base lg:text-lg">
+            <p className="mt-5 max-w-xl text-pretty text-[0.9375rem] leading-relaxed text-gray-500 sm:mt-6 sm:text-base lg:text-lg">
               Six agents, one orchestrated workflow, one stream of truth. Built to show judges{" "}
-              <span className="font-semibold text-zinc-200">IBM Watsonx Orchestrate</span>,{" "}
-              <span className="font-semibold text-zinc-200">Redis</span>, and{" "}
-              <span className="font-semibold text-zinc-200">Tavily</span> in the same breath.
+              <span className="font-semibold text-gray-700">IBM Watsonx Orchestrate</span>,{" "}
+              <span className="font-semibold text-gray-700">Redis</span>, and{" "}
+              <span className="font-semibold text-gray-700">Tavily</span> in the same breath.
             </p>
           </div>
-          <div className="rounded-2xl border border-teal-500/20 bg-teal-500/4 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.03)_inset] backdrop-blur-sm sm:p-6">
-            <p className="text-[0.65rem] font-bold uppercase tracking-[0.24em] text-teal-300/90">90-second story arc</p>
+          <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-5 sm:p-6">
+            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-blue-600">90-second story arc</p>
             <ol className="mt-4 space-y-3.5 sm:space-y-4">
               {SCRIPT.map((s) => (
-                <li key={s.title} className="border-l-2 border-orange-400/45 pl-4">
-                  <p className="text-[0.7rem] font-bold uppercase tracking-wide text-orange-200/90 sm:text-xs">{s.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-zinc-400">{s.body}</p>
+                <li key={s.title} className="border-l-2 border-amber-400 pl-4">
+                  <p className="text-[0.7rem] font-bold uppercase tracking-wide text-amber-700 sm:text-xs">{s.title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-500">{s.body}</p>
                 </li>
               ))}
             </ol>
@@ -86,9 +86,9 @@ export default function DashboardPage() {
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="eyebrow">The six-agent runway</p>
-            <h2 className="font-display mt-2 text-xl font-bold text-white sm:text-2xl">What fires after upload</h2>
+            <h2 className="font-display mt-2 text-xl font-bold text-gray-900 sm:text-2xl">What fires after upload</h2>
           </div>
-          <p className="max-w-sm text-xs text-zinc-500 sm:text-sm">
+          <p className="max-w-sm text-xs text-gray-400 sm:text-sm">
             Scroll on mobile — each box maps to a stage judges hear in the pitch.
           </p>
         </div>
@@ -129,8 +129,8 @@ export default function DashboardPage() {
         <section className="mt-16">
           <div className="mb-6">
             <p className="eyebrow">Portfolio</p>
-            <h2 className="font-display mt-2 text-2xl font-bold text-white">Jump back in</h2>
-            <p className="mt-1 text-sm text-zinc-500">Open a workflow you already ran — instant recap for Q&amp;A.</p>
+            <h2 className="font-display mt-2 text-2xl font-bold text-gray-900">Jump back in</h2>
+            <p className="mt-1 text-sm text-gray-400">Open a workflow you already ran — instant recap for Q&amp;A.</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {spend.vendors.map((v) => (
@@ -138,16 +138,16 @@ export default function DashboardPage() {
                 key={v.workflow_id}
                 type="button"
                 onClick={() => router.push(`/workflows/${v.workflow_id}`)}
-                className="group glass-subtle cursor-pointer rounded-2xl border border-transparent px-5 py-4 text-left transition-all hover:border-teal-500/30 hover:bg-teal-500/5"
+                className="group cursor-pointer rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm transition-all hover:border-blue-300 hover:shadow-md"
               >
-                <p className="text-sm font-semibold text-white">{v.vendor}</p>
-                <p className="mt-1.5 text-xs text-zinc-500 transition-colors group-hover:text-zinc-400">
+                <p className="text-sm font-semibold text-gray-900">{v.vendor}</p>
+                <p className="mt-1.5 text-xs text-gray-400 transition-colors group-hover:text-gray-500">
                   {new Intl.NumberFormat("en-US", {
                     style: "currency",
                     currency: "USD",
                     maximumFractionDigits: 0,
                   }).format(v.annual_value)}
-                  <span className="text-zinc-600">/yr</span>
+                  <span className="text-gray-300">/yr</span>
                 </p>
               </button>
             ))}

@@ -92,24 +92,23 @@ export default function WorkflowPage({
 
   return (
     <div className="page-shell max-w-7xl">
-      {/* Header */}
       <header className="mb-8 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="eyebrow">Workflow {id.slice(0, 12)}…</p>
-          <h1 className="font-display mt-3 text-3xl font-extrabold tracking-[-0.03em] text-white sm:text-[2.15rem]">
+          <h1 className="font-display mt-3 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-[2.15rem]">
             {workflowState.backendStatus === "FAILED"
               ? "Workflow failed"
               : isReady
                 ? "Analysis complete"
                 : "Agents running…"}
           </h1>
-          <p className="mt-2 max-w-xl text-sm text-zinc-500">
+          <p className="mt-2 max-w-xl text-sm text-gray-500">
             Point at the feed: every line is an event your backend published — that is the Redis story.
           </p>
           {workflowState.demoMode && (
-            <p className="mt-4 inline-flex max-w-full flex-wrap items-center gap-2 rounded-xl border border-orange-400/30 bg-orange-500/10 px-3 py-2 text-xs leading-relaxed text-orange-100">
-              <span className="font-bold uppercase tracking-wider text-orange-200">Demo mode</span>
-              <span className="text-orange-100/90">{workflowState.demoModeReason}</span>
+            <p className="mt-4 inline-flex max-w-full flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800">
+              <span className="font-bold uppercase tracking-wider text-amber-700">Demo mode</span>
+              <span className="text-amber-700/80">{workflowState.demoModeReason}</span>
             </p>
           )}
         </div>
@@ -123,9 +122,8 @@ export default function WorkflowPage({
         )}
       </header>
 
-      {/* Pipeline progress — horizontal on small viewports */}
       <div className="mb-10 min-w-0">
-        <p className="mb-3 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-zinc-600">
+        <p className="mb-3 text-[0.65rem] font-bold uppercase tracking-widest text-gray-400">
           Six-agent pipeline
         </p>
         <div className="-mx-1 flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-2 lg:overflow-visible lg:pb-0">
@@ -134,20 +132,20 @@ export default function WorkflowPage({
             return (
             <div
               key={key}
-              className={`workflow-step shrink-0 snap-center sm:min-w-[9.5rem] lg:min-w-0 transition-all duration-300 ${
+              className={`workflow-step shrink-0 snap-center sm:min-w-38 lg:min-w-0 transition-all duration-300 ${
                 state === "done"
-                  ? "border-emerald-500/40 bg-emerald-500/10"
+                  ? "border-emerald-200 bg-emerald-50"
                   : state === "active"
-                    ? "border-teal-400/55 bg-teal-500/15 shadow-[0_14px_50px_rgba(20,184,166,0.25)]"
-                    : "border-white/10 opacity-95"
+                    ? "border-blue-300 bg-blue-50 shadow-md"
+                    : "border-slate-200 opacity-95"
               }`}
             >
               <span
                 className={`workflow-step-number ${
                   state === "done"
-                    ? "bg-emerald-500/30 text-emerald-100"
+                    ? "bg-emerald-100 text-emerald-700"
                     : state === "active"
-                      ? "bg-teal-500/35 text-teal-50 animate-pulse shadow-[0_0_20px_rgba(45,212,191,0.35)]"
+                      ? "bg-blue-100 text-blue-700 animate-pulse"
                       : ""
                 }`}
               >
@@ -169,12 +167,9 @@ export default function WorkflowPage({
         </div>
       </div>
 
-      {/* Main content: Agent Feed + Cards */}
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        {/* Left: Live Agent Feed */}
         <LiveAgentFeed events={displayedAgentEvents} />
 
-        {/* Right: Summary cards stacked */}
         <div className="flex flex-col gap-6">
           <ContractSummaryCard
             contract={displayedContractRecord}
@@ -190,7 +185,6 @@ export default function WorkflowPage({
         </div>
       </div>
 
-      {/* Artifacts */}
       {isReady && (
         <section className="mt-6">
           <ArtifactReviewPanel

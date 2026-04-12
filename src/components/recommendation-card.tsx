@@ -1,10 +1,10 @@
 import type { Recommendation, VendorResearch } from "@/lib/types";
 
 const urgencyStyles: Record<Recommendation["urgency"], string> = {
-  LOW: "text-sky-100 bg-sky-400/12 border-sky-300/25",
-  MEDIUM: "text-amber-100 bg-amber-400/12 border-amber-300/25",
-  HIGH: "text-rose-100 bg-rose-400/12 border-rose-300/25",
-  CRITICAL: "text-rose-50 bg-rose-500/18 border-rose-300/30",
+  LOW: "text-blue-700 bg-blue-50 border-blue-200",
+  MEDIUM: "text-amber-700 bg-amber-50 border-amber-200",
+  HIGH: "text-red-600 bg-red-50 border-red-200",
+  CRITICAL: "text-red-700 bg-red-100 border-red-300",
 };
 
 export function RecommendationCard({
@@ -21,9 +21,9 @@ export function RecommendationCard({
   };
 }) {
   return (
-    <section className="panel-surface h-full border-rose-500/25 bg-[linear-gradient(165deg,rgba(63,10,26,0.5)_0%,rgba(9,9,11,0.95)_45%,rgba(3,7,18,1)_100%)] shadow-[0_32px_100px_rgba(190,18,60,0.22)]">
+    <section className="panel-surface h-full border-red-200 bg-linear-to-br from-red-50/60 via-white to-amber-50/30 shadow-[0_8px_32px_rgba(239,68,68,0.08)]">
       <p className="eyebrow">Recommendation</p>
-      <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-zinc-600">
+      <p className="mt-3 text-xs font-bold uppercase tracking-widest text-gray-400">
         Step 4 · Decide the action
       </p>
       <h2 className="panel-title">Take action now</h2>
@@ -32,13 +32,13 @@ export function RecommendationCard({
         before the notice window closes.
       </p>
 
-      <article className="mt-6 rounded-[30px] border border-rose-300/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(120,17,45,0.1))] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <article className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-rose-100/70">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
               Recommended decision
             </p>
-            <h3 className="font-display mt-2 text-4xl font-extrabold tracking-[-0.05em] text-white sm:text-6xl">
+            <h3 className="font-display mt-2 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-6xl">
               {recommendation.decision}
             </h3>
           </div>
@@ -49,35 +49,35 @@ export function RecommendationCard({
           </span>
         </div>
 
-        <div className="mt-5 rounded-3xl border border-amber-300/24 bg-amber-300/12 px-5 py-4">
+        <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-amber-100/75">
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-700">
                 {deadlineCallout.label}
               </p>
-              <p className="mt-1 text-2xl font-semibold tracking-tight text-white">
+              <p className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
                 {deadlineCallout.value}
               </p>
             </div>
-            <span className="rounded-full border border-amber-300/30 bg-amber-200/12 px-3 py-1 text-xs font-semibold text-amber-100">
+            <span className="rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
               confirm notice period
             </span>
           </div>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-amber-50/85">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-amber-800/80">
             {deadlineCallout.detail}
           </p>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-end justify-between gap-4 rounded-2xl border border-white/8 bg-black/10 px-4 py-3">
+        <div className="mt-5 flex flex-wrap items-end justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
               Confidence
             </p>
-            <p className="mt-1 text-2xl font-semibold text-white">
+            <p className="mt-1 text-2xl font-semibold text-gray-900">
               {Math.round(recommendation.confidence * 100)}%
             </p>
           </div>
-          <p className="max-w-sm text-sm leading-6 text-slate-300">
+          <p className="max-w-sm text-sm leading-6 text-gray-500">
             The pricing gap, renewal timing, and weak contract terms are clear
             enough to move now while the notice clause is being confirmed.
           </p>
@@ -85,14 +85,14 @@ export function RecommendationCard({
 
         <div className="mt-6 grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
               Why act now
             </p>
             <div className="mt-3 space-y-3">
               {recommendation.reasons.map((reason, idx) => (
                 <p
                   key={idx}
-                  className="glass-subtle rounded-2xl px-4 py-3 text-sm leading-6 text-slate-200"
+                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-gray-700"
                 >
                   {reason}
                 </p>
@@ -101,14 +101,14 @@ export function RecommendationCard({
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
               Next moves
             </p>
             <div className="mt-3 space-y-2">
               {recommendation.nextSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="rounded-2xl border border-cyan-300/14 bg-cyan-300/8 px-4 py-3 text-sm text-slate-100"
+                  className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800"
                 >
                   {step}
                 </div>
@@ -117,18 +117,18 @@ export function RecommendationCard({
           </div>
         </div>
 
-        <details className="mt-6 rounded-2xl border border-white/8 bg-slate-950/28 px-4 py-3">
-          <summary className="cursor-pointer list-none text-sm font-medium text-slate-200">
+        <details className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <summary className="cursor-pointer list-none text-sm font-medium text-gray-700">
             View supporting vendor research
           </summary>
           <div className="mt-4 space-y-4">
             <div>
-              <p className="text-sm font-medium text-cyan-100">Recent news</p>
+              <p className="text-sm font-medium text-blue-700">Recent news</p>
               <div className="mt-2 space-y-2">
                 {vendorResearch.recentNews.map((item, idx) => (
                   <div
                     key={idx}
-                    className="glass-subtle rounded-2xl px-4 py-3 text-sm text-slate-300"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-gray-600"
                   >
                     {item}
                   </div>
@@ -137,12 +137,12 @@ export function RecommendationCard({
             </div>
 
             <div>
-              <p className="text-sm font-medium text-cyan-100">Pricing signals</p>
+              <p className="text-sm font-medium text-blue-700">Pricing signals</p>
               <div className="mt-2 space-y-2">
                 {vendorResearch.pricingSignals.map((item, idx) => (
                   <div
                     key={idx}
-                    className="glass-subtle rounded-2xl px-4 py-3 text-sm text-slate-300"
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-gray-600"
                   >
                     {item}
                   </div>
@@ -151,15 +151,15 @@ export function RecommendationCard({
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
-              <div className="glass-subtle rounded-2xl p-4">
-                <p className="text-sm font-medium text-cyan-100">Alternatives</p>
-                <p className="mt-2 text-sm leading-6 text-slate-300">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <p className="text-sm font-medium text-blue-700">Alternatives</p>
+                <p className="mt-2 text-sm leading-6 text-gray-600">
                   {vendorResearch.alternatives.join(", ")}
                 </p>
               </div>
-              <div className="glass-subtle rounded-2xl p-4">
-                <p className="text-sm font-medium text-cyan-100">Sources</p>
-                <p className="mt-2 text-sm leading-6 text-slate-300">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <p className="text-sm font-medium text-blue-700">Sources</p>
+                <p className="mt-2 text-sm leading-6 text-gray-600">
                   {vendorResearch.sources.join(" · ")}
                 </p>
               </div>

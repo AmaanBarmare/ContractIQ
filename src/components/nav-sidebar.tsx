@@ -36,27 +36,27 @@ export function NavSidebar() {
   const activeWorkflowId = workflowMatch ? workflowMatch[1] : null;
 
   return (
-    <aside className="relative sticky top-0 z-30 hidden h-screen w-[260px] shrink-0 flex-col border-r border-white/10 bg-zinc-950 lg:flex">
+    <aside className="sticky top-0 z-30 hidden h-screen w-65 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
       <div
-        className="pointer-events-none absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-teal-500/80 via-teal-500/15 to-orange-500/30"
+        className="pointer-events-none absolute inset-y-0 left-0 w-0.75 bg-linear-to-b from-blue-500 via-blue-400/30 to-amber-400/40"
         aria-hidden
       />
-      <div className="flex min-h-0 flex-1 flex-col pl-[3px] pr-4 pt-9">
+      <div className="flex min-h-0 flex-1 flex-col pl-0.75 pr-4 pt-9">
         <Link href="/" className="group ml-2 block">
           <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-teal-500/35 bg-gradient-to-br from-teal-500/25 to-zinc-900 font-display text-sm font-extrabold tracking-tight text-teal-200 shadow-[0_0_32px_rgba(20,184,166,0.25)]">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-200 bg-linear-to-br from-blue-50 to-blue-100 font-display text-sm font-extrabold tracking-tight text-blue-600 shadow-sm">
               CI
             </span>
             <div>
-              <p className="font-display text-[0.72rem] font-bold tracking-[0.2em] text-teal-300">CONTRACTIQ</p>
-              <p className="mt-0.5 max-w-[11rem] text-[0.68rem] leading-snug text-zinc-500">
+              <p className="font-display text-[0.72rem] font-bold tracking-[0.2em] text-blue-600">CONTRACTIQ</p>
+              <p className="mt-0.5 max-w-44 text-[0.68rem] leading-snug text-gray-400">
                 Renewal rescue · multi-agent
               </p>
             </div>
           </div>
         </Link>
 
-        <div className="mx-2 mt-8 mb-6 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+        <div className="mx-2 mt-8 mb-6 h-px bg-linear-to-r from-transparent via-slate-200 to-transparent" />
 
         <nav className="flex flex-col gap-1.5">
           {navItems.map(({ href, label, icon }) => {
@@ -71,16 +71,16 @@ export function NavSidebar() {
                 href={href}
                 className={`group relative flex items-center gap-3 rounded-xl py-2.5 pl-3 pr-3 text-[0.88rem] font-semibold transition-colors ${
                   isActive
-                    ? "bg-white/[0.07] text-white"
-                    : "text-zinc-500 hover:bg-white/[0.04] hover:text-zinc-200"
+                    ? "bg-blue-50 text-gray-900"
+                    : "text-gray-400 hover:bg-slate-50 hover:text-gray-700"
                 }`}
               >
                 {isActive ? (
-                  <span className="absolute inset-y-2 left-0 w-[3px] rounded-r bg-gradient-to-b from-teal-400 to-orange-400 shadow-[0_0_18px_rgba(45,212,191,0.5)]" />
+                  <span className="absolute inset-y-2 left-0 w-0.75 rounded-r bg-linear-to-b from-blue-500 to-blue-600" />
                 ) : null}
                 <span
                   className={`transition-colors ${
-                    isActive ? "text-teal-300" : "text-zinc-600 group-hover:text-zinc-400"
+                    isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-500"
                   }`}
                 >
                   {icons[icon]}
@@ -92,24 +92,24 @@ export function NavSidebar() {
 
           {activeWorkflowId && (
             <>
-              <div className="mx-2 my-4 h-px bg-white/10" />
-              <p className="mb-1 px-3 text-[0.62rem] font-bold tracking-[0.22em] text-zinc-600">LIVE WORKFLOW</p>
+              <div className="mx-2 my-4 h-px bg-slate-200" />
+              <p className="mb-1 px-3 text-[0.62rem] font-bold tracking-[0.22em] text-gray-400">LIVE WORKFLOW</p>
               <Link
                 href={`/workflows/${activeWorkflowId}`}
                 className={`group relative flex items-center gap-3 rounded-xl py-2.5 pl-3 pr-3 text-[0.88rem] font-semibold transition-colors ${
                   pathname === `/workflows/${activeWorkflowId}`
-                    ? "bg-white/[0.07] text-white"
-                    : "text-zinc-500 hover:bg-white/[0.04] hover:text-zinc-200"
+                    ? "bg-blue-50 text-gray-900"
+                    : "text-gray-400 hover:bg-slate-50 hover:text-gray-700"
                 }`}
               >
                 {pathname === `/workflows/${activeWorkflowId}` ? (
-                  <span className="absolute inset-y-2 left-0 w-[3px] rounded-r bg-gradient-to-b from-teal-400 to-orange-400 shadow-[0_0_18px_rgba(45,212,191,0.5)]" />
+                  <span className="absolute inset-y-2 left-0 w-0.75 rounded-r bg-linear-to-b from-blue-500 to-blue-600" />
                 ) : null}
                 <span
                   className={
                     pathname === `/workflows/${activeWorkflowId}`
-                      ? "text-teal-300"
-                      : "text-zinc-600 group-hover:text-zinc-400"
+                      ? "text-blue-600"
+                      : "text-gray-400 group-hover:text-gray-500"
                   }
                 >
                   {icons.workflow}
@@ -120,18 +120,18 @@ export function NavSidebar() {
                 href={`/workflows/${activeWorkflowId}/results`}
                 className={`group relative flex items-center gap-3 rounded-xl py-2.5 pl-3 pr-3 text-[0.88rem] font-semibold transition-colors ${
                   pathname.endsWith("/results")
-                    ? "bg-white/[0.07] text-white"
-                    : "text-zinc-500 hover:bg-white/[0.04] hover:text-zinc-200"
+                    ? "bg-blue-50 text-gray-900"
+                    : "text-gray-400 hover:bg-slate-50 hover:text-gray-700"
                 }`}
               >
                 {pathname.endsWith("/results") ? (
-                  <span className="absolute inset-y-2 left-0 w-[3px] rounded-r bg-gradient-to-b from-teal-400 to-orange-400 shadow-[0_0_18px_rgba(45,212,191,0.5)]" />
+                  <span className="absolute inset-y-2 left-0 w-0.75 rounded-r bg-linear-to-b from-blue-500 to-blue-600" />
                 ) : null}
                 <span
                   className={
                     pathname.endsWith("/results")
-                      ? "text-teal-300"
-                      : "text-zinc-600 group-hover:text-zinc-400"
+                      ? "text-blue-600"
+                      : "text-gray-400 group-hover:text-gray-500"
                   }
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -147,13 +147,13 @@ export function NavSidebar() {
           )}
         </nav>
 
-        <div className="mt-auto border-t border-white/10 pt-6 pb-8">
-          <div className="ml-2 rounded-2xl border border-orange-500/20 bg-gradient-to-br from-orange-500/10 to-zinc-900/80 p-4">
-            <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-orange-200/90">Judge narrative</p>
-            <p className="mt-2 text-[0.72rem] leading-relaxed text-zinc-400">
-              Say: <span className="text-zinc-200">Orchestrate</span> dispatches agents →{" "}
-              <span className="text-zinc-200">Redis Streams</span> feed the UI →{" "}
-              <span className="text-zinc-200">Tavily</span> grounds research.
+        <div className="mt-auto border-t border-slate-200 pt-6 pb-8">
+          <div className="ml-2 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-amber-700">Judge narrative</p>
+            <p className="mt-2 text-[0.72rem] leading-relaxed text-gray-500">
+              Say: <span className="font-semibold text-gray-700">Orchestrate</span> dispatches agents →{" "}
+              <span className="font-semibold text-gray-700">Redis Streams</span> feed the UI →{" "}
+              <span className="font-semibold text-gray-700">Tavily</span> grounds research.
             </p>
           </div>
         </div>

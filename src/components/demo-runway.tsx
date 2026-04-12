@@ -14,14 +14,14 @@ export function DemoRunway() {
         {AGENTS.map((a) => (
           <div
             key={a.n}
-            className="flex w-[9.25rem] shrink-0 flex-col rounded-xl border border-white/10 bg-zinc-900/80 px-3 py-3 shadow-[0_12px_40px_rgba(0,0,0,0.45)] sm:w-[10rem]"
+            className="flex w-37 shrink-0 flex-col rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm transition-shadow hover:shadow-md sm:w-40"
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="font-mono text-[0.65rem] font-bold text-teal-400/90">{a.n}</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-teal-400 to-orange-400 shadow-[0_0_12px_rgba(45,212,191,0.6)]" />
+              <span className="font-mono text-[0.65rem] font-bold text-blue-600">{a.n}</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-linear-to-r from-blue-500 to-blue-400 shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
             </div>
-            <p className="font-display mt-2 text-base font-bold tracking-tight text-white">{a.name}</p>
-            <p className="mt-1 text-[0.7rem] leading-snug text-zinc-500">{a.detail}</p>
+            <p className="font-display mt-2 text-base font-bold tracking-tight text-gray-900">{a.name}</p>
+            <p className="mt-1 text-[0.7rem] leading-snug text-gray-400">{a.detail}</p>
           </div>
         ))}
       </div>

@@ -51,7 +51,7 @@ export function ContractSummaryCard({
   return (
     <section className="panel-surface h-full">
       <p className="eyebrow">Contract summary</p>
-      <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-zinc-600">
+      <p className="mt-3 text-xs font-bold uppercase tracking-widest text-gray-400">
         Step 3 · Review extracted terms
       </p>
       <h2 className="panel-title">Extracted renewal record</h2>
@@ -59,26 +59,26 @@ export function ContractSummaryCard({
         This extracted record feeds the risk review and recommendation. Scan the
         key terms first, then confirm anything uncertain.
       </p>
-      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-600">
+      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
         Analysis source · {sourceLabels[analysisSource]}
       </p>
 
-      <div className="mt-6 rounded-3xl border border-amber-300/25 bg-amber-400/10 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-        <p className="text-xs uppercase tracking-[0.24em] text-amber-100/90">
+      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <p className="text-xs font-bold uppercase tracking-widest text-amber-700">
           Low-confidence field
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <p className="text-lg font-semibold text-white">
+          <p className="text-lg font-semibold text-gray-900">
             Notice period extracted as{" "}
             {contract.noticePeriodDays === null
               ? "Unknown"
               : `${contract.noticePeriodDays} days`}
           </p>
-          <span className="rounded-full border border-amber-300/30 bg-amber-300/12 px-3 py-1 text-xs font-semibold text-amber-100">
+          <span className="rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
             {Math.round((contract.extractionConfidence.noticePeriodDays ?? 0.58) * 100)}% confidence
           </span>
         </div>
-        <p className="mt-3 text-sm leading-6 text-amber-50/85">
+        <p className="mt-3 text-sm leading-6 text-amber-800/80">
           This field needs human confirmation before any vendor outreach.
         </p>
       </div>
@@ -88,15 +88,15 @@ export function ContractSummaryCard({
           const confidence = contract.extractionConfidence[field] ?? 0;
           const confidenceClass =
             confidence < 0.7
-              ? "border-amber-300/30 bg-amber-400/10 text-amber-100"
-              : "border-emerald-300/20 bg-emerald-400/8 text-emerald-100";
+              ? "border-amber-200 bg-amber-50 text-amber-700"
+              : "border-emerald-200 bg-emerald-50 text-emerald-700";
 
           return (
             <div key={label} className="glass-subtle rounded-2xl p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="metric-label">{label}</p>
-                  <p className="mt-2 text-sm font-medium leading-6 text-white sm:text-[0.95rem]">
+                  <p className="mt-2 text-sm font-medium leading-6 text-gray-900 sm:text-[0.95rem]">
                     {value}
                   </p>
                 </div>
