@@ -112,7 +112,7 @@ The agent uses a two-stage classification approach:
 Common patterns like "MSA", "Master Agreement", "Order Form", "Amendment", "DPA" in filenames allow immediate classification with high confidence.
 
 **Stage 2 — Content classification (for ambiguous files)**
-If filename confidence is below 75%, the agent extracts the first 500 words of the document and prompts Watsonx.ai:
+If filename confidence is below 75%, the agent extracts the first 500 words of the document and prompts Claude (via `app/services/llm_client.py`):
 
 ```
 You are a contract classification assistant. Based on the following document excerpt, 

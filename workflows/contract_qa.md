@@ -62,7 +62,7 @@ Search Agent (lightweight — not a full pipeline run)
          └── Retrieve vendor workspace → Redis Hash for that vendor's contracts
                    │
                    ▼
-         Watsonx.ai synthesizes answer from retrieved context
+         Claude synthesizes answer from retrieved context
                    │
                    ▼
          Return: direct answer + supporting clauses + vendor refs + recommended action

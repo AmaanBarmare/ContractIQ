@@ -18,8 +18,8 @@ Usage (from repo root):
 
     python scripts/run_pipeline.py
 
-Requires a populated ``.env`` with ``WATSONX_API_KEY``, ``WATSONX_URL``,
-``WATSONX_PROJECT_ID`` — the Extraction and Decision agents call Watsonx.ai.
+Requires a populated ``.env`` with ``ANTHROPIC_API_KEY`` — the Extraction and
+Decision agents call Claude via the Anthropic SDK.
 
 Expected output on the Zoom demo scenario:
     * Extraction: ~16 fields, ``notice_period`` flagged ~58% confidence

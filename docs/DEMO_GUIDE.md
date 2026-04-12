@@ -19,10 +19,10 @@ Complete guide for presenting ContractIQ at the Enterprise Agents Hackathon — 
 Run through this the morning of Sunday (or Saturday night):
 
 - [ ] All four Zoom sample documents are ready to upload
-- [ ] Redis is running and healthy (`redis-cli ping` returns `PONG`)
+- [ ] Redis is running locally and healthy (`redis-cli ping` returns `PONG`)
 - [ ] Watsonx Orchestrate workflow is configured and tested end-to-end
-- [ ] Tavily API key is valid and returning results for "Zoom"
-- [ ] Watsonx.ai API key is valid
+- [ ] `vasco-tavily` tool in Orchestrate returns results for "Zoom"
+- [ ] `ANTHROPIC_API_KEY` is valid (smoke test `call_llm('ping')`)
 - [ ] Backend is running (`uvicorn app.main:app`)
 - [ ] Frontend is running (`npm run dev`)
 - [ ] Live Agent Feed is displaying events in real time

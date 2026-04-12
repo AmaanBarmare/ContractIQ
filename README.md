@@ -7,7 +7,7 @@
 
 ## What It Is
 
-ContractIQ is a multi-agent AI platform that transforms scattered vendor contracts into a structured procurement operating system. Six specialized agents — orchestrated by IBM Watsonx Orchestrate — work together to extract contract data, detect risk, research vendors in real time, recommend decisions, and generate stakeholder-ready artifacts.
+ContractIQ is a multi-agent AI platform that transforms scattered vendor contracts into a structured procurement operating system. Six specialized agents — orchestrated by IBM Watsonx Orchestrate, reasoning with Anthropic Claude — work together to extract contract data, detect risk, research vendors in real time via Tavily, recommend decisions, and generate stakeholder-ready artifacts.
 
 **The core promise:** Upload contracts once. ContractIQ continuously helps your team answer questions, detect risk, prepare decisions, and drive renew / renegotiate / cancel workflows — with full traceability and human approval at every critical step.
 
@@ -57,20 +57,17 @@ cd contractiq
 
 # Install dependencies
 pip install -r requirements.txt
-npm install
 
 # Configure environment
 cp .env.example .env
-# Fill in: WATSONX_API_KEY, REDIS_URL, TAVILY_API_KEY, WATSONX_PROJECT_ID
+# Fill in: ORCHESTRATE_API_KEY, ORCHESTRATE_INSTANCE_URL,
+#         ANTHROPIC_API_KEY, REDIS_URL, SECRET_KEY
 
-# Start Redis
+# Start Redis (local)
 docker run -d -p 6379:6379 redis/redis-stack
 
-# Start backend
-uvicorn app.main:app --reload
-
-# Start frontend
-cd frontend && npm run dev
+# Run the pipeline end-to-end on the Zoom sample
+python scripts/run_pipeline.py
 ```
 
 ---
@@ -127,10 +124,10 @@ contractiq/
 
 | Sponsor | Integration |
 |---|---|
-| **IBM Watsonx Orchestrate** | Master orchestrator for all six agents — routes tasks, enforces confidence thresholds, manages human approval gates |
-| **IBM Watsonx.ai** | LLM backbone for extraction, risk reasoning, decision synthesis, and artifact generation |
-| **Redis** | Vector search (clause retrieval), Streams (inter-agent message bus + Live Agent Feed), Hash (contract records), Sorted Sets (renewal deadlines), TTL cache (vendor research) |
-| **Tavily** | Real-time vendor intelligence — news, pricing benchmarks, security incidents, M&A activity, competitor research |
+| **IBM Watsonx Orchestrate** | Master orchestrator for all six agents — routes tasks, enforces confidence thresholds, manages human approval gates. Also hosts the `vasco-tavily` tool used by the Vendor Research agent. |
+| **Anthropic Claude** (via Anthropic SDK) | LLM backbone for extraction, decision synthesis, and artifact generation |
+| **Redis** (local) | Streams (inter-agent message bus + Live Agent Feed), Hash (contract records), Sorted Sets (renewal deadlines), TTL cache (vendor research) |
+| **Tavily** | Real-time vendor intelligence — news, pricing benchmarks, security incidents, M&A activity — accessed through the `vasco-tavily` tool inside Watsonx Orchestrate |
 
 ---
 

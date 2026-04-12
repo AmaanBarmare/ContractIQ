@@ -58,12 +58,12 @@ contractiq/
 │   │   ├── decision.py          ← Agent 5
 │   │   └── generation.py        ← Agent 6
 │   ├── orchestrator/
-│   │   └── watsonx.py           ← Watsonx Orchestrate client and workflow dispatch
+│   │   └── orchestrate.py       ← IBM Watsonx Orchestrate client + workflow dispatch
 │   ├── services/
 │   │   ├── redis_client.py      ← Redis connection + helper functions
-│   │   ├── embeddings.py        ← Watsonx Embeddings wrapper
-│   │   ├── parser.py            ← PyMuPDF / LlamaParse document parsing
-│   │   └── tavily_client.py     ← Tavily Search API wrapper
+│   │   ├── llm_client.py        ← Anthropic Claude wrapper (call_llm)
+│   │   ├── parser.py            ← PyMuPDF document parsing
+│   │   └── tavily_client.py     ← Tavily (via Orchestrate vasco-tavily tool)
 │   ├── models/
 │   │   ├── contract.py          ← Pydantic models for contract records
 │   │   ├── workflow.py          ← Workflow state models
@@ -122,22 +122,25 @@ cp .env.example .env
 Required values in `.env`:
 
 ```bash
-# IBM Watsonx
-WATSONX_API_KEY=          # from IBM Cloud → Watsonx → API Keys
-WATSONX_URL=https://us-south.ml.cloud.ibm.com
-WATSONX_PROJECT_ID=       # from IBM Watsonx project settings
+# IBM Watsonx Orchestrate — for workflow orchestration + Tavily tool access
+ORCHESTRATE_API_KEY=       # from your Watsonx Orchestrate instance
+ORCHESTRATE_INSTANCE_URL=  # e.g. https://dl.watson-orchestrate.ibm.com/...
 
-# Redis
+# Anthropic Claude — LLM backbone for Extraction and Decision agents
+ANTHROPIC_API_KEY=         # from console.anthropic.com
+# Optional override; defaults to claude-sonnet-4-6
+# ANTHROPIC_MODEL_ID=claude-sonnet-4-6
+
+# Redis (local, free)
 REDIS_URL=redis://localhost:6379
-# OR for Redis Cloud:
-REDIS_CLOUD_URL=          # from Redis Cloud dashboard
-
-# Tavily
-TAVILY_API_KEY=            # from app.tavily.com
 
 # App
 SECRET_KEY=your-secret-key-here
 ```
+
+> **Note:** Tavily is not configured directly. It's accessed through the
+> `vasco-tavily` tool connected inside Watsonx Orchestrate, so no
+> `TAVILY_API_KEY` is required in this repo.
 
 ### 2. Install Python dependencies
 
@@ -145,7 +148,7 @@ SECRET_KEY=your-secret-key-here
 pip install -r requirements.txt
 ```
 
-Key packages: `fastapi`, `uvicorn`, `redis`, `ibm-watsonx-ai`, `langgraph`, `tavily-python`, `pymupdf`, `llama-parse`, `pydantic`
+Key packages: `anthropic`, `pymupdf`, `pydantic`, `python-dotenv`. FastAPI / Redis / orchestration packages are added by the Integration Engineer as that layer is built.
 
 ### 3. Start Redis Stack
 
@@ -272,7 +275,6 @@ Tavily is purpose-built for AI agents — it returns clean, structured, citation
 | `renewals_by_deadline` | Sorted Set | vendor_id → days_until_cancellation_deadline |
 | `agent_events` | Stream | All inter-agent messages (Live Agent Feed source) |
 | `audit_log` | Stream | All human actions (confirmations, approvals) |
-| `contract_idx` | Vector Index | Embeddings of all contract text chunks |
 
 ---
 
@@ -310,11 +312,13 @@ docker ps | grep redis  # check if container is running
 docker start contractiq-redis
 ```
 
-**Watsonx API key invalid**
-Check that `WATSONX_PROJECT_ID` matches the project where the model is deployed. The API key alone is not sufficient — the project ID scopes access.
+**Anthropic API key invalid / missing**
+Check that `ANTHROPIC_API_KEY` is set in `.env` at the repo root. Smoke test:
+`python -c "from app.services.llm_client import call_llm; print(call_llm('say hello'))"`.
+401/403 means the key is wrong or revoked — regenerate at console.anthropic.com.
 
 **Tavily returning no results**
-Test the key directly: `python -c "from tavily import TavilyClient; print(TavilyClient(api_key='YOUR_KEY').search('Zoom company news'))"`
+Tavily is accessed via the `vasco-tavily` tool in Watsonx Orchestrate, not directly. If vendor research comes back empty, verify the tool is still connected in the Orchestrate console and that `ORCHESTRATE_API_KEY` / `ORCHESTRATE_INSTANCE_URL` are correct.
 
 **Extraction returning low confidence across all fields**
 Check that PyMuPDF is extracting text correctly from the sample PDFs: `python -c "import fitz; doc = fitz.open('path/to/pdf'); print(doc[0].get_text()[:500])"`. If text is garbled or empty, the PDF may be scanned — use LlamaParse instead.
@@ -343,3 +347,42 @@ Check the WebSocket connection in the browser console. Ensure the backend is run
 - Measurable business impact with KPIs ← required
 - Working demo that shows agents performing verifiable actions ← required
 - Enterprise guardrails (human-in-the-loop, audit trail) ← required
+
+<!-- code-review-graph MCP tools -->
+## MCP Tools: code-review-graph
+
+**IMPORTANT: This project has a knowledge graph. ALWAYS use the
+code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
+the codebase.** The graph is faster, cheaper (fewer tokens), and gives
+you structural context (callers, dependents, test coverage) that file
+scanning cannot.
+
+### When to use graph tools FIRST
+
+- **Exploring code**: `semantic_search_nodes` or `query_graph` instead of Grep
+- **Understanding impact**: `get_impact_radius` instead of manually tracing imports
+- **Code review**: `detect_changes` + `get_review_context` instead of reading entire files
+- **Finding relationships**: `query_graph` with callers_of/callees_of/imports_of/tests_for
+- **Architecture questions**: `get_architecture_overview` + `list_communities`
+
+Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+
+### Key Tools
+
+| Tool | Use when |
+|------|----------|
+| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
+| `get_review_context` | Need source snippets for review — token-efficient |
+| `get_impact_radius` | Understanding blast radius of a change |
+| `get_affected_flows` | Finding which execution paths are impacted |
+| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
+| `semantic_search_nodes` | Finding functions/classes by name or keyword |
+| `get_architecture_overview` | Understanding high-level codebase structure |
+| `refactor_tool` | Planning renames, finding dead code |
+
+### Workflow
+
+1. The graph auto-updates on file changes (via hooks).
+2. Use `detect_changes` for code review.
+3. Use `get_affected_flows` to understand impact.
+4. Use `query_graph` pattern="tests_for" to check coverage.

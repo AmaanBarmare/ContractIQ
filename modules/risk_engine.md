@@ -138,11 +138,11 @@ The knowledge layer is ContractIQ's semantic search and Q&A engine — the inter
 ```
 User question
       │
-Query embedding (Watsonx Embeddings)
+Query embedding (embedding provider TBD — not wired up yet)
       │
 Redis Vector Search → top K relevant chunks
       │
-Watsonx.ai synthesis prompt
+Claude synthesis prompt (via app/services/llm_client.py)
       │
 Structured answer: direct response + evidence + confidence + recommended action
 ```

@@ -112,7 +112,7 @@ These are the metrics ContractIQ is designed to move. All are measurable.
 
 Three forces are converging to make ContractIQ viable in 2026:
 
-**1. LLM extraction quality is now production-ready.** Contract extraction with Watsonx.ai achieves 90%+ field-level accuracy on standard commercial agreements — a threshold that was not reliably achievable 18 months ago.
+**1. LLM extraction quality is now production-ready.** Contract extraction with frontier LLMs (ContractIQ uses Anthropic Claude) achieves 90%+ field-level accuracy on standard commercial agreements — a threshold that was not reliably achievable 18 months ago.
 
 **2. Mid-market SaaS sprawl has hit a breaking point.** The average 1,000-person company now manages 130+ SaaS tools. The contracts behind those tools are completely unmanaged in most procurement teams.
 

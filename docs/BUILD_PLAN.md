@@ -28,14 +28,14 @@
 ### Integration Engineer
 - [ ] IBM Cloud account active — Watsonx Orchestrate workspace created
 - [ ] Test simplest Watsonx Orchestrate workflow: dispatch one dummy agent and confirm it returns
-- [ ] Redis Cloud instance provisioned — test `redis-cli ping`
-- [ ] Tavily API key tested: run one search for "Zoom company news" and confirm results return
+- [ ] Local Redis running — test `redis-cli ping`
+- [ ] `vasco-tavily` tool inside Orchestrate tested: run one search for "Zoom company news" and confirm results return
 - [ ] FastAPI skeleton running on localhost
 
 ### Agent Engineer
-- [ ] Python environment with `ibm-watsonx-ai`, `langgraph`, `pymupdf`, `redis` installed
-- [ ] Test Watsonx.ai model call: send a simple extraction prompt, confirm structured JSON returns
-- [ ] Confirm Granite model is accessible in the project
+- [ ] Python environment with `anthropic`, `pymupdf`, `pydantic`, `python-dotenv` installed
+- [ ] Test Claude model call: send a simple extraction prompt, confirm structured JSON returns
+- [ ] Confirm `ANTHROPIC_API_KEY` is set and the default model (`claude-sonnet-4-6`) is accessible
 
 ### Frontend
 - [ ] Next.js project initialized with Tailwind + shadcn/ui

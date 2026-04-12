@@ -93,14 +93,19 @@ Static contract documents cannot answer these questions. Tavily can.
 
 ---
 
-## Tavily Integration
+## Tavily Integration (via Watsonx Orchestrate)
+
+Tavily is **not** called directly. It's connected inside Watsonx Orchestrate
+as the `vasco-tavily` tool. The Vendor Research agent invokes that tool
+through the Orchestrate API, which handles auth and rate-limiting. This keeps
+all Tavily credentials inside Orchestrate and removes the need for a
+`TAVILY_API_KEY` in this repo.
 
 ```python
-from tavily import TavilyClient
-import redis
 import json
+import redis
+from app.services.orchestrate_client import invoke_tool  # thin wrapper over Orchestrate API
 
-client = TavilyClient(api_key=TAVILY_API_KEY)
 r = redis.Redis.from_url(REDIS_URL)
 
 def research_vendor(vendor_name: str, category: str, vendor_id: str) -> dict:
@@ -109,52 +114,29 @@ def research_vendor(vendor_name: str, category: str, vendor_id: str) -> dict:
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
-    
-    results = {}
-    
-    # Company health
-    results["company"] = client.search(
-        f"{vendor_name} company news funding 2026",
-        search_depth="advanced",
-        max_results=4,
-        include_answer=True
-    )
-    
-    # Security
-    results["security"] = client.search(
-        f"{vendor_name} security breach data incident 2025 2026",
-        max_results=3,
-        include_answer=True
-    )
-    
-    # Pricing benchmarks
-    results["pricing"] = client.search(
-        f"{category} software pricing per seat benchmark 2026",
-        max_results=4,
-        include_answer=True
-    )
-    
-    # Alternatives
-    results["alternatives"] = client.search(
-        f"best alternatives to {vendor_name} {category}",
-        max_results=5,
-        include_answer=True
-    )
-    
-    # Customer sentiment
-    results["sentiment"] = client.search(
-        f"{vendor_name} customer reviews problems 2025 2026",
-        max_results=3,
-        include_answer=True
-    )
-    
+
+    def tavily(query: str, max_results: int = 4) -> dict:
+        return invoke_tool(
+            tool_name="vasco-tavily",
+            inputs={"query": query, "max_results": max_results},
+        )
+
+    results = {
+        "company":      tavily(f"{vendor_name} company news funding 2026", 4),
+        "security":     tavily(f"{vendor_name} security breach data incident 2025 2026", 3),
+        "pricing":      tavily(f"{category} software pricing per seat benchmark 2026", 4),
+        "alternatives": tavily(f"best alternatives to {vendor_name} {category}", 5),
+        "sentiment":    tavily(f"{vendor_name} customer reviews problems 2025 2026", 3),
+    }
+
     # Cache results for 24 hours
     r.setex(cache_key, 86400, json.dumps(results))
-    
     return results
 ```
 
-**Privacy note:** Only the vendor name and category label are sent to Tavily. No contract text, no pricing data, no PII, no internal annotations.
+**Privacy note:** Only the vendor name and category label are sent to the
+`vasco-tavily` tool. No contract text, no pricing data, no PII, no internal
+annotations ever leave the system via Tavily queries.
 
 ---
 

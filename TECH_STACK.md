@@ -9,16 +9,13 @@ Full breakdown of every technology used in ContractIQ, why it was chosen, and ex
 | Layer | Technology | Version |
 |---|---|---|
 | Orchestration | IBM Watsonx Orchestrate | Latest |
-| LLM / Reasoning | IBM Watsonx.ai (Granite / Llama 3) | Latest |
-| Memory & State | Redis Stack | 7.x |
-| Semantic Search | Redis Vector Search | Built into Redis Stack |
-| External Research | Tavily Search API | v2 |
-| Document Parsing | PyMuPDF + LlamaParse | Latest |
-| Embeddings | IBM Watsonx Embeddings | Latest |
-| Agent Framework | Python + LangGraph | 0.2.x |
+| LLM / Reasoning | Anthropic Claude (via Anthropic SDK) | `claude-sonnet-4-6` |
+| Memory & State | Redis Stack (local) | 7.x |
+| External Research | Tavily Search API (via Orchestrate `vasco-tavily` tool) | — |
+| Document Parsing | PyMuPDF | Latest |
 | Backend API | FastAPI | 0.110.x |
 | Frontend | React + Next.js | Next 14 |
-| Containerization | Docker + Docker Compose | Latest |
+| Containerization | Docker | Latest |
 
 ---
 
@@ -138,7 +135,7 @@ if not cached:
 
 ---
 
-## Tavily Search API
+## Tavily Search API (via Watsonx Orchestrate)
 
 **Role:** Real-time external intelligence for the Vendor Research Agent.
 
@@ -150,129 +147,78 @@ if not cached:
 
 **How we use it:**
 
-```python
-from tavily import TavilyClient
+Tavily is **not** called directly. It's connected inside Watsonx Orchestrate as
+the `vasco-tavily` tool. The Vendor Research agent invokes the tool through
+Orchestrate, which handles auth and rate-limiting. This keeps Tavily credentials
+inside Orchestrate and removes the need for a `TAVILY_API_KEY` in this repo.
 
-client = TavilyClient(api_key=TAVILY_API_KEY)
+The Vendor Research agent issues four scoped queries per run:
+1. Company overview and recent news
+2. Security incidents and breaches
+3. Pricing benchmarks for the category
+4. Competing alternatives to the current vendor
 
-def research_vendor(vendor_name: str, category: str) -> dict:
-    results = {}
-    
-    # Company overview and recent news
-    results["news"] = client.search(
-        f"{vendor_name} company news 2026",
-        search_depth="advanced",
-        max_results=5
-    )
-    
-    # Security incidents
-    results["security"] = client.search(
-        f"{vendor_name} security breach incident data 2025 2026",
-        max_results=3
-    )
-    
-    # Pricing benchmarks
-    results["pricing"] = client.search(
-        f"{category} software pricing benchmark average cost 2026",
-        max_results=4
-    )
-    
-    # Alternatives
-    results["alternatives"] = client.search(
-        f"best alternatives to {vendor_name} {category}",
-        max_results=4
-    )
-    
-    return results
-```
-
-**Important:** Only vendor names and category terms are sent to Tavily. No contract text, no pricing data, no PII ever leaves the system via Tavily queries.
+**Important:** Only vendor names and category terms are passed to the tool. No
+contract text, no pricing data, no PII is ever sent through Tavily queries.
 
 ---
 
-## IBM Watsonx.ai
+## Anthropic Claude
 
 **Role:** LLM backbone for all reasoning, extraction, and generation tasks.
 
-**Models used:**
-- `ibm/granite-13b-instruct-v2` — primary model for structured extraction (fast, precise)
-- `meta-llama/llama-3-70b-instruct` — decision reasoning and artifact generation (more capable)
+**Model used:**
+- `claude-sonnet-4-6` — default for structured extraction, decision reasoning, and artifact generation. Override via `ANTHROPIC_MODEL_ID`.
 
 **Integration pattern:**
 
 ```python
-from ibm_watsonx_ai import Credentials
-from ibm_watsonx_ai.foundation_models import Model
+import anthropic
 
-model = Model(
-    model_id="ibm/granite-13b-instruct-v2",
-    credentials=Credentials(api_key=WATSONX_API_KEY, url=WATSONX_URL),
-    project_id=WATSONX_PROJECT_ID,
-    params={"max_new_tokens": 2000, "temperature": 0.1}  # low temp for extraction
+client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+
+message = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=3000,
+    temperature=0.1,  # low temp for extraction
+    messages=[{"role": "user", "content": extraction_prompt}],
 )
 
-response = model.generate_text(prompt=extraction_prompt)
+response_text = message.content[0].text
 ```
 
+The wrapper lives in `app/services/llm_client.py` as `call_llm(prompt, temperature)`.
+Agents (extraction, decision) import and call it — they do not talk to the
+Anthropic SDK directly, so swapping providers is a single-file change.
+
 **Temperature strategy:**
-- Extraction tasks: `temperature=0.1` — deterministic, precise
-- Risk analysis: `temperature=0.2` — structured but allows reasoning
+- Extraction tasks: `temperature=0.05` — deterministic, precise
+- Decision synthesis: `temperature=0.2` — structured but allows reasoning
 - Artifact generation: `temperature=0.4` — more natural language variation
 
 ---
 
-## LangGraph (Agent Framework)
+## PyMuPDF
 
-**Role:** Individual agent logic, tool calling, and structured output enforcement.
-
-Each agent is implemented as a LangGraph graph with defined nodes and edges:
-
-```python
-from langgraph.graph import StateGraph
-
-def build_extraction_agent():
-    graph = StateGraph(ExtractionState)
-    graph.add_node("parse_documents", parse_documents_node)
-    graph.add_node("extract_fields", extract_fields_node)
-    graph.add_node("score_confidence", score_confidence_node)
-    graph.add_node("store_to_redis", store_to_redis_node)
-    graph.add_node("publish_completion", publish_completion_node)
-    
-    graph.set_entry_point("parse_documents")
-    graph.add_edge("parse_documents", "extract_fields")
-    graph.add_edge("extract_fields", "score_confidence")
-    graph.add_conditional_edges("score_confidence", route_by_confidence, {
-        "proceed": "store_to_redis",
-        "flag": "store_to_redis"  # store anyway, but flag in the record
-    })
-    graph.add_edge("store_to_redis", "publish_completion")
-    
-    return graph.compile()
-```
-
----
-
-## PyMuPDF + LlamaParse
-
-**Role:** Document ingestion and text extraction from PDFs and DOCX files.
+**Role:** Document ingestion and text extraction from PDFs.
 
 ```python
 import fitz  # PyMuPDF
 
-def extract_text_from_pdf(path: str) -> list[dict]:
+def parse_pdf(path: str) -> str:
     doc = fitz.open(path)
-    chunks = []
-    for page_num, page in enumerate(doc):
-        text = page.get_text()
-        chunks.append({
-            "page": page_num + 1,
-            "text": text,
-            "char_count": len(text)
-        })
-    return chunks
+    try:
+        return "\n\n".join(
+            page.get_text() for page in doc if page.get_text().strip()
+        )
+    finally:
+        doc.close()
 ```
 
-LlamaParse is used for complex, multi-column, or table-heavy contracts where PyMuPDF's output is noisy.
+The wrapper lives in `app/services/parser.py`. Scanned/image-only PDFs aren't
+supported yet — if the demo hits one, the parser output will be empty and
+extraction confidence will crater. Add OCR (LlamaParse or similar) only if
+that actually happens on real inputs.
 
 ---
 
@@ -313,19 +259,21 @@ async def agent_feed_websocket(websocket: WebSocket, workflow_id: str):
 ## Environment Variables
 
 ```bash
-# IBM Watsonx
-WATSONX_API_KEY=
-WATSONX_URL=https://us-south.ml.cloud.ibm.com
-WATSONX_PROJECT_ID=
+# IBM Watsonx Orchestrate — workflow orchestration + vasco-tavily tool access
+ORCHESTRATE_API_KEY=
+ORCHESTRATE_INSTANCE_URL=
 
-# Redis
+# Anthropic Claude — LLM backbone
+ANTHROPIC_API_KEY=
+# Optional override; defaults to claude-sonnet-4-6
+# ANTHROPIC_MODEL_ID=claude-sonnet-4-6
+
+# Redis (local)
 REDIS_URL=redis://localhost:6379
-REDIS_CLOUD_URL=  # use for Redis Cloud
-
-# Tavily
-TAVILY_API_KEY=
 
 # App
 SECRET_KEY=
-DATABASE_URL=sqlite:///./contractiq.db  # local dev only
 ```
+
+> Tavily is accessed through the `vasco-tavily` tool inside Watsonx Orchestrate,
+> so no `TAVILY_API_KEY` is needed in this repo.

@@ -45,9 +45,9 @@ ContractIQ is a multi-agent system where each agent owns exactly one job. No age
                                ┌───────────┴──────────┐
                                │   EXTERNAL SERVICES   │
                                │                       │
-                               │  Tavily Search API    │
-                               │  IBM Watsonx.ai LLM   │
-                               │  PyMuPDF / LlamaParse │
+                               │  Anthropic Claude LLM │
+                               │  Tavily (via Orch.)   │
+                               │  PyMuPDF              │
                                └───────────────────────┘
 ```
 
@@ -65,7 +65,7 @@ Ingestion → Extraction → ┌── Risk Agent         ──┐
                          └── Vendor Research Agent ─┘
 ```
 
-Risk and Vendor Research run in parallel because they are independent — Risk reads only the extracted contract record, Vendor Research only calls Tavily. Both complete before the Decision Agent begins.
+Risk and Vendor Research run in parallel because they are independent — Risk reads only the extracted contract record, Vendor Research only calls the Tavily tool through Watsonx Orchestrate. Both complete before the Decision Agent begins.
 
 ### Orchestrate as State Machine
 
@@ -190,7 +190,7 @@ Redis Instance
 4. Watsonx pauses → user confirms notice period = 60 days
         │
 5. Risk Agent (starts) ──────────── Vendor Research Agent (starts, parallel)
-   reads Redis contract hash         calls Tavily API
+   reads Redis contract hash         invokes vasco-tavily tool via Orchestrate
    computes risk flags               fetches vendor intel + benchmarks
         │                                    │
         └──────────────┬─────────────────────┘
@@ -214,7 +214,7 @@ Redis Instance
 ## Security & Governance
 
 - All contract data stays within the team's cloud tenancy — no contract text is sent to Tavily (only vendor names and category terms are used in search queries)
-- IBM Watsonx.ai processes contract text; data handling follows IBM's enterprise data governance policies
+- Anthropic Claude processes contract text; data handling follows Anthropic's enterprise data processing and retention policies
 - Audit trail in Redis is append-only — no entry can be modified after it is written
 - User identity is attached to every human action in the audit log
 - No external action (email, escalation) can fire without a logged human approval

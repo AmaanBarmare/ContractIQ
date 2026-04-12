@@ -184,7 +184,7 @@ def build_contract_record(data: dict[str, Any]) -> ContractRecord:
       ``missing_fields`` (entirely absent)
 
     Exposed as a separate function so tests can validate the post-processing
-    logic without actually calling Watsonx.
+    logic without actually calling the LLM.
     """
     fields: dict[str, ExtractedField] = {
         name: _build_field(data.get(name)) for name in EXTRACTION_FIELD_NAMES
@@ -231,7 +231,7 @@ def run_extraction(contract_text: str) -> ContractRecord:
     """Run the Extraction Agent end-to-end.
 
     1. Trim to ``MAX_PROMPT_CHARS`` to stay inside the token budget.
-    2. Call Watsonx with the extraction prompt at temperature 0.05.
+    2. Call Claude with the extraction prompt at temperature 0.05.
     3. Parse the JSON response and assemble a ``ContractRecord``.
     """
     prompt = EXTRACTION_PROMPT.replace("{contract_text}", contract_text[:MAX_PROMPT_CHARS])
