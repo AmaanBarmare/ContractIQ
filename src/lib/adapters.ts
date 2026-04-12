@@ -146,7 +146,7 @@ export function adaptWorkflowArtifactsResponse(
       ? negotiationArtifact.content
           .split("\n")
           .map((line) => line.replace(/^[\s*-]+/, "").trim())
-          .filter(Boolean)
+          .filter((line) => line && !/^\|[-|\s]+\|$/.test(line))
       : [],
     draftEmail: emailArtifact?.content ?? "",
     approvalStatus: artifactStatusToApproval(

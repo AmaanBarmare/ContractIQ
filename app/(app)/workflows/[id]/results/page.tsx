@@ -79,7 +79,7 @@ export default function ResultsPage({
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col px-5 py-8 sm:px-8 lg:px-10">
+    <div className="page-shell max-w-7xl">
       {/* Header */}
       <header className="mb-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
@@ -92,8 +92,8 @@ export default function ResultsPage({
             </svg>
             Back to pipeline
           </Link>
-          <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            Full Analysis Results
+          <h1 className="font-display text-2xl font-extrabold tracking-[-0.03em] text-white sm:text-3xl">
+            Full analysis results
           </h1>
           <p className="mt-1 text-sm text-slate-400">
             Workflow {id.slice(0, 12)} — {displayedContractRecord.vendorName}

@@ -245,23 +245,23 @@ async def ws_agent_feed(websocket, workflow_id: str):
 
 ## React + Next.js Frontend
 
-**Role:** Single-page dashboard for the full renewal workflow: upload → extract → evaluate → recommend → approve.
+**Role:** Multi-route “mission control” UI for the renewal workflow: dashboard → live pipeline → full results, with demo-first affordances (runway strip, presenter copy).
 
 **Stack:** Next.js 16.2.3 (App Router, Turbopack) + React 19 + Tailwind CSS v4.
 
 **Architecture:**
 - App Router files live in `app/` alongside the Python backend (Next.js ignores `.py` files)
 - Components, hooks, and lib code live in `src/` with `@/*` path aliases
-- Single-page app — all five workflow steps visible on one dashboard
+- Route group `(app)/` provides shared shell (sidebar, animated backdrop)
 - Demo fallback mode: if the backend is unavailable, the UI shows pre-built Zoom scenario data
 
 **Key libraries:**
-- `tailwindcss` v4 — utility-first styling with glass-morphism panel design
+- `tailwindcss` v4 — utility-first styling with slab panels, aurora backdrop, teal/orange accent system
 - Custom `useWorkflow` hook — manages workflow state machine (create → upload → poll → hydrate → approve)
 - Typed `api-client.ts` — fetch-based client matching all 18 backend routes
 - `adapters.ts` — transforms backend Pydantic model shapes into UI-friendly types
 
-**Fonts:** Space Grotesk (body) + IBM Plex Mono (code/labels)
+**Fonts:** Syne (display headlines) + Outfit (UI) + IBM Plex Mono (code/timestamps)
 
 ---
 

@@ -123,11 +123,13 @@ All three layers — agents, orchestration, and frontend — are merged and work
 ### Frontend (Next.js 16 + React 19 + Tailwind v4)
 
 **App Router** (colocated in `app/` alongside Python backend):
-- `app/page.tsx` — Single-page dashboard (upload → extract → evaluate → recommend → approve)
-- `app/layout.tsx` — Root layout with Space Grotesk + IBM Plex Mono fonts
-- `app/globals.css` — Tailwind v4 theme, glass-morphism panel styles
+- `app/(app)/page.tsx` — Dashboard: story arc, six-agent runway, upload → workflow
+- `app/layout.tsx` — Root layout: **Syne** (display) + **Outfit** (UI) + **IBM Plex Mono**
+- `app/globals.css` — Tailwind v4 + “mission control” slab surfaces, aurora backdrop, CTAs
 
 **Components** (`src/components/`):
+- `demo-runway.tsx` — Horizontal six-agent strip (shows the pipeline before upload)
+- `nav-sidebar.tsx` — Desktop nav + presenter “judge narrative” card
 - `upload-panel.tsx` — Drag-and-drop file upload with status indicators
 - `live-agent-feed.tsx` — Real-time agent event timeline
 - `contract-summary-card.tsx` — Extracted fields with per-field confidence badges

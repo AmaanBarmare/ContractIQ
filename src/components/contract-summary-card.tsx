@@ -51,7 +51,7 @@ export function ContractSummaryCard({
   return (
     <section className="panel-surface h-full">
       <p className="eyebrow">Contract summary</p>
-      <p className="mt-3 text-xs uppercase tracking-[0.24em] text-slate-400">
+      <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-zinc-600">
         Step 3 · Review extracted terms
       </p>
       <h2 className="panel-title">Extracted renewal record</h2>
@@ -59,7 +59,7 @@ export function ContractSummaryCard({
         This extracted record feeds the risk review and recommendation. Scan the
         key terms first, then confirm anything uncertain.
       </p>
-      <p className="mt-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-600">
         Analysis source · {sourceLabels[analysisSource]}
       </p>
 

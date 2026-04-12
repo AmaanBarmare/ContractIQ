@@ -14,7 +14,7 @@ export function ArtifactReviewPanel({
   return (
     <section className="panel-surface h-full">
       <p className="eyebrow">Artifact review</p>
-      <p className="mt-3 text-xs uppercase tracking-[0.24em] text-slate-400">
+      <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-zinc-600">
         Step 5 · Review and approve
       </p>
       <h2 className="panel-title">Approval-ready outputs</h2>
@@ -40,9 +40,9 @@ export function ArtifactReviewPanel({
             </span>
           </div>
           <div className="mt-4 space-y-3">
-            {artifactPack.negotiationPoints.map((point) => (
+            {artifactPack.negotiationPoints.map((point, idx) => (
               <div
-                key={point}
+                key={idx}
                 className="rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm leading-6 text-slate-200"
               >
                 {point}
@@ -51,22 +51,22 @@ export function ArtifactReviewPanel({
           </div>
         </div>
 
-        <div className="rounded-[26px] border border-cyan-300/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(15,23,42,0.48))] p-5 shadow-[0_18px_50px_rgba(8,47,73,0.22)]">
+        <div className="rounded-[26px] border border-teal-500/25 bg-gradient-to-b from-teal-500/10 to-zinc-950/80 p-5 shadow-[0_22px_60px_rgba(13,148,136,0.18)]">
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-lg font-semibold text-white">Draft vendor email</h3>
             <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1 text-xs font-medium text-slate-200">
               {isApproved ? "Approved" : "Draft ready"}
             </span>
           </div>
-          <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/55 p-5">
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-6 text-slate-200">
+          <div className="mt-4 rounded-2xl border border-white/10 bg-zinc-950/70 p-5">
+            <pre className="whitespace-pre-wrap font-mono text-[0.8125rem] leading-relaxed text-zinc-200">
               {artifactPack.draftEmail}
             </pre>
           </div>
 
           <div className="mt-5 flex flex-wrap gap-3">
             {isApproved ? (
-              <span className="rounded-full bg-emerald-500/20 px-5 py-2.5 text-sm font-semibold text-emerald-100">
+              <span className="rounded-full border border-emerald-400/25 bg-emerald-500/15 px-5 py-2.5 text-sm font-semibold text-emerald-100">
                 Approved
               </span>
             ) : (
@@ -74,7 +74,7 @@ export function ArtifactReviewPanel({
                 type="button"
                 onClick={() => onApprove?.()}
                 disabled={!workflowId}
-                className="rounded-full bg-cyan-300 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:bg-cyan-300/40"
+                className="btn-primary disabled:pointer-events-none"
               >
                 Approve all artifacts
               </button>

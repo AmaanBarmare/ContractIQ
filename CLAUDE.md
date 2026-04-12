@@ -81,6 +81,8 @@ contractiq/
 │
 ├── src/                         ← Frontend source (Next.js 16 + React 19)
 │   ├── components/
+│   │   ├── nav-sidebar.tsx      ← Desktop navigation + “judge narrative”
+│   │   ├── demo-runway.tsx      ← Six-agent runway strip (dashboard)
 │   │   ├── upload-panel.tsx     ← Drag-and-drop file upload
 │   │   ├── live-agent-feed.tsx  ← Live Agent Feed (real-time events)
 │   │   ├── contract-summary-card.tsx ← Extracted contract terms display
@@ -118,6 +120,18 @@ contractiq/
 ├── docker-compose.yml           ← Redis Stack + backend + frontend
 └── Makefile                     ← Common commands (see below)
 ```
+
+---
+
+## Frontend UI (mission control)
+
+The Next.js layer is built for **on-stage narration**: dark zinc canvas, teal/orange accents, **Syne** display type for headlines, **Outfit** for UI chrome, **IBM Plex Mono** for code and timestamps. The shell uses animated aurora blobs plus a light grain overlay — it should read as a live ops console, not generic “AI slop” glass.
+
+**Demo affordances (see `design.md` for the full spec):**
+
+- **Dashboard** — hero band + **90-second story arc** (what to say: upload → feed → approve) + **six-agent runway** (`src/components/demo-runway.tsx`) so judges see the pipeline before a file is dropped.
+- **Sidebar** — includes a compact **judge narrative** card: Orchestrate → Redis Streams → Tavily.
+- **Workflow** — pipeline and feed copy reinforce that the UI trace is the same stream you could replay from Redis.
 
 ---
 

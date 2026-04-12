@@ -21,9 +21,9 @@ export function RecommendationCard({
   };
 }) {
   return (
-    <section className="panel-surface h-full border-rose-300/14 bg-[linear-gradient(180deg,rgba(40,10,21,0.96),rgba(15,23,42,0.92)_32%,rgba(2,8,23,0.9)),rgba(15,23,42,0.82)] shadow-[0_28px_90px_rgba(120,17,45,0.32)]">
+    <section className="panel-surface h-full border-rose-500/25 bg-[linear-gradient(165deg,rgba(63,10,26,0.5)_0%,rgba(9,9,11,0.95)_45%,rgba(3,7,18,1)_100%)] shadow-[0_32px_100px_rgba(190,18,60,0.22)]">
       <p className="eyebrow">Recommendation</p>
-      <p className="mt-3 text-xs uppercase tracking-[0.24em] text-slate-400">
+      <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-zinc-600">
         Step 4 · Decide the action
       </p>
       <h2 className="panel-title">Take action now</h2>
@@ -38,7 +38,7 @@ export function RecommendationCard({
             <p className="text-xs uppercase tracking-[0.24em] text-rose-100/70">
               Recommended decision
             </p>
-            <h3 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-white sm:text-6xl">
+            <h3 className="font-display mt-2 text-4xl font-extrabold tracking-[-0.05em] text-white sm:text-6xl">
               {recommendation.decision}
             </h3>
           </div>
@@ -89,9 +89,9 @@ export function RecommendationCard({
               Why act now
             </p>
             <div className="mt-3 space-y-3">
-              {recommendation.reasons.map((reason) => (
+              {recommendation.reasons.map((reason, idx) => (
                 <p
-                  key={reason}
+                  key={idx}
                   className="glass-subtle rounded-2xl px-4 py-3 text-sm leading-6 text-slate-200"
                 >
                   {reason}
@@ -105,9 +105,9 @@ export function RecommendationCard({
               Next moves
             </p>
             <div className="mt-3 space-y-2">
-              {recommendation.nextSteps.map((step) => (
+              {recommendation.nextSteps.map((step, idx) => (
                 <div
-                  key={step}
+                  key={idx}
                   className="rounded-2xl border border-cyan-300/14 bg-cyan-300/8 px-4 py-3 text-sm text-slate-100"
                 >
                   {step}
@@ -125,9 +125,9 @@ export function RecommendationCard({
             <div>
               <p className="text-sm font-medium text-cyan-100">Recent news</p>
               <div className="mt-2 space-y-2">
-                {vendorResearch.recentNews.map((item) => (
+                {vendorResearch.recentNews.map((item, idx) => (
                   <div
-                    key={item}
+                    key={idx}
                     className="glass-subtle rounded-2xl px-4 py-3 text-sm text-slate-300"
                   >
                     {item}
@@ -139,9 +139,9 @@ export function RecommendationCard({
             <div>
               <p className="text-sm font-medium text-cyan-100">Pricing signals</p>
               <div className="mt-2 space-y-2">
-                {vendorResearch.pricingSignals.map((item) => (
+                {vendorResearch.pricingSignals.map((item, idx) => (
                   <div
-                    key={item}
+                    key={idx}
                     className="glass-subtle rounded-2xl px-4 py-3 text-sm text-slate-300"
                   >
                     {item}

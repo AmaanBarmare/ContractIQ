@@ -91,58 +91,63 @@ export default function WorkflowPage({
   const analysisSource = hasWorkflowData ? "parsed_content" : "fallback_demo";
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col px-5 py-8 sm:px-8 lg:px-10">
+    <div className="page-shell max-w-7xl">
       {/* Header */}
-      <header className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <header className="mb-8 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="eyebrow">Workflow {id.slice(0, 12)}</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          <p className="eyebrow">Workflow {id.slice(0, 12)}…</p>
+          <h1 className="font-display mt-3 text-3xl font-extrabold tracking-[-0.03em] text-white sm:text-[2.15rem]">
             {workflowState.backendStatus === "FAILED"
-              ? "Workflow Failed"
+              ? "Workflow failed"
               : isReady
-                ? "Analysis Complete"
-                : "Processing..."}
+                ? "Analysis complete"
+                : "Agents running…"}
           </h1>
+          <p className="mt-2 max-w-xl text-sm text-zinc-500">
+            Point at the feed: every line is an event your backend published — that is the Redis story.
+          </p>
           {workflowState.demoMode && (
-            <p className="mt-2 rounded-lg border border-amber-300/20 bg-amber-300/10 px-3 py-1.5 text-xs text-amber-100">
-              Demo mode: {workflowState.demoModeReason}
+            <p className="mt-4 inline-flex max-w-full flex-wrap items-center gap-2 rounded-xl border border-orange-400/30 bg-orange-500/10 px-3 py-2 text-xs leading-relaxed text-orange-100">
+              <span className="font-bold uppercase tracking-wider text-orange-200">Demo mode</span>
+              <span className="text-orange-100/90">{workflowState.demoModeReason}</span>
             </p>
           )}
         </div>
         {isReady && (
-          <Link
-            href={`/workflows/${id}/results`}
-            className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2.5 text-sm font-medium text-cyan-100 transition-colors hover:bg-cyan-400/20"
-          >
-            View full results
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <Link href={`/workflows/${id}/results`} className="btn-primary shrink-0 self-start md:self-center">
+            Full analysis
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </Link>
         )}
       </header>
 
-      {/* Pipeline progress */}
-      <div className="mb-8 grid gap-2 lg:grid-cols-6">
-        {pipelineSteps.map(({ key, num, label, title }) => {
-          const state = stepState(key, workflowState.backendStatus);
-          return (
+      {/* Pipeline progress — horizontal on small viewports */}
+      <div className="mb-10 min-w-0">
+        <p className="mb-3 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-zinc-600">
+          Six-agent pipeline
+        </p>
+        <div className="-mx-1 flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-2 lg:overflow-visible lg:pb-0">
+          {pipelineSteps.map(({ key, num, label, title }) => {
+            const state = stepState(key, workflowState.backendStatus);
+            return (
             <div
               key={key}
-              className={`workflow-step transition-all ${
+              className={`workflow-step shrink-0 snap-center sm:min-w-[9.5rem] lg:min-w-0 transition-all duration-300 ${
                 state === "done"
-                  ? "border-emerald-400/30 bg-emerald-400/8"
+                  ? "border-emerald-500/40 bg-emerald-500/10"
                   : state === "active"
-                    ? "border-cyan-400/40 bg-cyan-400/12 shadow-lg shadow-cyan-900/30"
-                    : ""
+                    ? "border-teal-400/55 bg-teal-500/15 shadow-[0_14px_50px_rgba(20,184,166,0.25)]"
+                    : "border-white/10 opacity-95"
               }`}
             >
               <span
                 className={`workflow-step-number ${
                   state === "done"
-                    ? "bg-emerald-400/25 text-emerald-200"
+                    ? "bg-emerald-500/30 text-emerald-100"
                     : state === "active"
-                      ? "bg-cyan-400/25 text-cyan-100 animate-pulse"
+                      ? "bg-teal-500/35 text-teal-50 animate-pulse shadow-[0_0_20px_rgba(45,212,191,0.35)]"
                       : ""
                 }`}
               >
@@ -161,6 +166,7 @@ export default function WorkflowPage({
             </div>
           );
         })}
+        </div>
       </div>
 
       {/* Main content: Agent Feed + Cards */}

@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, Outfit, Syne } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -18,7 +25,7 @@ export const metadata: Metadata = {
   description: "AI-assisted contract review workspace for legal and revenue teams",
 };
 
-const fontVariables = `${spaceGrotesk.variable} ${ibmPlexMono.variable}`;
+const fontVariables = `${syne.variable} ${outfit.variable} ${ibmPlexMono.variable}`;
 
 export default function RootLayout({
   children,

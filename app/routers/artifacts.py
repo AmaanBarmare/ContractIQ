@@ -14,7 +14,7 @@ async def get_workflow_artifacts(workflow_id: str):
     """Return all artifacts for a workflow."""
     data = get_artifacts(workflow_id)
     if not data:
-        raise HTTPException(404, f"No artifacts for workflow {workflow_id}")
+        return {"artifacts": [], "workflow_id": workflow_id}
     return data
 
 
