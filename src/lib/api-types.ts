@@ -147,6 +147,28 @@ export type BackendFlaggedField = {
   sourceText?: string | null;
 };
 
+// -- Spend summary --
+
+export type SpendSummaryResponse = {
+  total_annual_spend: number;
+  vendor_count: number;
+  vendors: Array<{
+    vendor: string;
+    annual_value: number;
+    workflow_id: string;
+  }>;
+};
+
+// -- Urgent renewals --
+
+export type UrgentRenewalsResponse = {
+  urgent_renewals: Array<{
+    vendor_id: string;
+    days_until_deadline: number;
+  }>;
+  count: number;
+};
+
 // -- Agent feed events (WebSocket) --
 
 export type AgentFeedEvent = {

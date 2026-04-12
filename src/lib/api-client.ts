@@ -7,6 +7,8 @@
 import type {
   ApproveWorkflowResponse,
   ContractResponse,
+  SpendSummaryResponse,
+  UrgentRenewalsResponse,
   WorkflowArtifactsResponse,
   WorkflowCreateResponse,
   WorkflowDecisionResponse,
@@ -169,6 +171,22 @@ export async function approveWorkflowArtifacts(
   return requestJson<ApproveWorkflowResponse>(
     buildApiUrl(`/api/workflows/${workflowId}/approve`),
     { method: "POST" },
+  );
+}
+
+// -- Portfolio endpoints --
+
+/** GET /api/spend/summary */
+export async function getSpendSummary(): Promise<SpendSummaryResponse> {
+  return requestJson<SpendSummaryResponse>(buildApiUrl("/api/spend/summary"));
+}
+
+/** GET /api/renewals/urgent */
+export async function getUrgentRenewals(
+  maxDays = 90,
+): Promise<UrgentRenewalsResponse> {
+  return requestJson<UrgentRenewalsResponse>(
+    buildApiUrl(`/api/renewals/urgent?max_days=${maxDays}`),
   );
 }
 

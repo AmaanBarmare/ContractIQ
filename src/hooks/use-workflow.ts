@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   adaptBackendFlaggedFields,
@@ -51,7 +51,7 @@ type UseWorkflowResult = {
   agentEvents: AgentEvent[];
   vendorResearch: VendorResearch;
   noticeDeadlineCallout: NoticeDeadlineCallout;
-  startWorkflow: (files: File[]) => Promise<void>;
+  startWorkflow: (files: File[]) => Promise<string | null>;
   approveArtifacts: () => Promise<void>;
 };
 
@@ -86,7 +86,7 @@ const buildFlaggedFieldsFromContract = (
   });
 };
 
-export function useWorkflow(): UseWorkflowResult {
+export function useWorkflow(existingWorkflowId?: string): UseWorkflowResult {
   const [workflowState, setWorkflowState] =
     useState<UiWorkflowState>(initialUiWorkflowState);
   const [contractRecord, setContractRecord] = useState<ContractRecord>(
@@ -106,6 +106,21 @@ export function useWorkflow(): UseWorkflowResult {
   );
   const [noticeDeadlineCallout, setNoticeDeadlineCallout] =
     useState<NoticeDeadlineCallout>(primaryDemoScenario.noticeDeadlineCallout);
+
+  // Auto-hydrate when initialized with an existing workflow ID
+  const didHydrate = useRef(false);
+  useEffect(() => {
+    if (existingWorkflowId && !didHydrate.current) {
+      didHydrate.current = true;
+      setWorkflowState((c) => ({
+        ...c,
+        workflowId: existingWorkflowId,
+        phase: UiWorkflowPhase.Processing,
+      }));
+      hydrateWorkflow(existingWorkflowId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingWorkflowId]);
 
   const applyDemoFallback = (reason: string) => {
     setContractRecord(primaryDemoScenario.contractRecord);
@@ -260,8 +275,8 @@ export function useWorkflow(): UseWorkflowResult {
     }
   };
 
-  const startWorkflow = async (files: File[]) => {
-    if (files.length === 0) return;
+  const startWorkflow = async (files: File[]): Promise<string | null> => {
+    if (files.length === 0) return null;
 
     setWorkflowState({
       ...initialUiWorkflowState,
@@ -286,13 +301,15 @@ export function useWorkflow(): UseWorkflowResult {
         phase: UiWorkflowPhase.Processing,
       }));
 
-      await hydrateWorkflow(workflow.workflow_id);
+      // Don't hydrate here — the workflow page will handle it
+      return workflow.workflow_id;
     } catch (error) {
       applyDemoFallback(
         error instanceof Error
           ? `${error.message} Showing demo mode instead.`
           : "Backend workflow unavailable. Showing demo mode instead.",
       );
+      return null;
     }
   };
 
