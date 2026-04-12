@@ -7,7 +7,7 @@ import { DemoRunway } from "@/components/demo-runway";
 import { UploadPanel } from "@/components/upload-panel";
 import { useWorkflow } from "@/hooks/use-workflow";
 import { uploadItems } from "@/lib/mock-data";
-import { getSpendSummary, getUrgentRenewals } from "@/lib/api-client";
+import { deleteWorkflow, getSpendSummary, getUrgentRenewals } from "@/lib/api-client";
 import type { SpendSummaryResponse, UrgentRenewalsResponse } from "@/lib/api-types";
 
 export default function DashboardPage() {
@@ -36,8 +36,13 @@ export default function DashboardPage() {
     setConfirmDelete(workflowId);
   };
 
-  const confirmDeleteWorkflow = () => {
+  const confirmDeleteWorkflow = async () => {
     if (!spend || !confirmDelete) return;
+    try {
+      await deleteWorkflow(confirmDelete);
+    } catch {
+      // Still remove from UI even if backend fails (e.g. already deleted)
+    }
     const removed = spend.vendors.find((v) => v.workflow_id === confirmDelete);
     setSpend({
       ...spend,

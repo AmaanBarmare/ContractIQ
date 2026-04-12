@@ -58,6 +58,20 @@ def get_workflow(workflow_id: str) -> Optional[dict]:
     return raw if raw else None
 
 
+def delete_workflow(workflow_id: str) -> bool:
+    """Delete a workflow and all its associated data from Redis."""
+    r = get_redis()
+    keys = [
+        f"workflow:{workflow_id}",
+        f"contract:{workflow_id}",
+        f"risk:{workflow_id}",
+        f"decision:{workflow_id}",
+        f"artifacts:{workflow_id}",
+    ]
+    deleted = r.delete(*keys)
+    return deleted > 0
+
+
 # ---------------------------------------------------------------------------
 # Contract helpers
 # ---------------------------------------------------------------------------

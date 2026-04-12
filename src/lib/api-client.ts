@@ -164,6 +164,16 @@ export async function getWorkflowArtifacts(
   );
 }
 
+/** DELETE /api/workflows/{id} — deletes workflow and all associated data */
+export async function deleteWorkflow(
+  workflowId: string,
+): Promise<{ status: string; workflow_id: string }> {
+  return requestJson<{ status: string; workflow_id: string }>(
+    buildApiUrl(`/api/workflows/${workflowId}`),
+    { method: "DELETE" },
+  );
+}
+
 /** POST /api/workflows/{id}/approve — approves all artifacts */
 export async function approveWorkflowArtifacts(
   workflowId: string,

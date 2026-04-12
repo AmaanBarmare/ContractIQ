@@ -11,7 +11,7 @@ from typing import Optional
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 from app.orchestrator.orchestrate import approve_workflow, create_workflow, run_workflow
-from app.services.redis_client import get_workflow
+from app.services.redis_client import delete_workflow as redis_delete_workflow, get_workflow
 
 router = APIRouter(prefix="/api/workflows", tags=["workflows"])
 
@@ -30,6 +30,15 @@ async def get_workflow_status(workflow_id: str):
     if not wf:
         raise HTTPException(404, f"Workflow {workflow_id} not found")
     return wf
+
+
+@router.delete("/{workflow_id}")
+async def delete_workflow_endpoint(workflow_id: str):
+    """Delete a workflow and all its associated data."""
+    deleted = redis_delete_workflow(workflow_id)
+    if not deleted:
+        raise HTTPException(404, f"Workflow {workflow_id} not found")
+    return {"status": "DELETED", "workflow_id": workflow_id}
 
 
 @router.post("/{workflow_id}/approve")
