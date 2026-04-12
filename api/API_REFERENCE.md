@@ -112,6 +112,71 @@ Returns the full extracted contract data for a workflow. The data is the seriali
 
 ---
 
+## Risk
+
+### Get Risk Report
+
+```
+GET /api/workflows/{workflow_id}/risk
+```
+
+Returns the risk analysis for a workflow. Saved after Agent 3 completes.
+
+**Response:**
+```json
+{
+  "workflow_id": "WF-a1b2c3d4",
+  "overall_risk_score": 56,
+  "risk_level": "HIGH",
+  "category_scores": { "renewal": 80, "commercial": 65, "legal": 55, "security": 40 },
+  "flags": [
+    {
+      "id": "flag_001",
+      "category": "renewal",
+      "severity": "Critical",
+      "signal": "Cancellation deadline in 5 days",
+      "detail": "Auto-renewal clause active with imminent deadline",
+      "color": "RED",
+      "recommended_action": "Send non-renewal notice immediately"
+    }
+  ],
+  "green_signals": ["DPA present", "SOC 2 Type II current"],
+  "confidence": 0.92
+}
+```
+
+---
+
+## Decision
+
+### Get Decision
+
+```
+GET /api/workflows/{workflow_id}/decision
+```
+
+Returns the decision synthesis from Agent 5.
+
+**Response:**
+```json
+{
+  "workflow_id": "WF-a1b2c3d4",
+  "recommendation": "RENEGOTIATE",
+  "confidence": 0.91,
+  "urgency": "CRITICAL",
+  "days_to_act": 5,
+  "primary_reason": "Cancellation deadline 5 days out with 3 Critical legal flags",
+  "reasoning": ["Auto-renewal active", "Above-market pricing", "Weak termination rights"],
+  "risks_if_no_action": "Contract auto-renews at above-market rate",
+  "potential_savings": "$9,360-$15,660 annually",
+  "negotiation_leverage": ["Competitive alternatives", "Pricing gap", "Weak exit terms"],
+  "next_steps": ["Confirm notice period", "Send renegotiation email", "Prepare alternatives"],
+  "stakeholder_checklist": { "Procurement": ["Send notice"], "Legal": ["Review terms"] }
+}
+```
+
+---
+
 ## Artifacts
 
 ### Get Artifacts

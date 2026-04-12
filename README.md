@@ -56,7 +56,8 @@ git clone https://github.com/your-team/contractiq
 cd contractiq
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirements.txt   # Python backend
+npm install                       # Next.js frontend
 
 # Configure environment
 cp .env.example .env
@@ -66,43 +67,50 @@ cp .env.example .env
 # Start Redis (local)
 docker run -d -p 6379:6379 redis/redis-stack
 
-# Run the pipeline end-to-end on the Zoom sample
+# Start backend (port 8000)
+uvicorn app.main:app --reload --port 8000
+
+# Start frontend (port 3000) — in a second terminal
+npm run dev
+
+# Or run the agent pipeline without the UI
 python scripts/run_pipeline.py
 ```
 
 ---
 
-## What's Being Built (Status: ✅ Complete & Verified)
+## Implementation Status: ✅ Complete (Backend + Frontend)
 
-The orchestration layer that connects Amaan's agents to the world. These components handle multi-agent coordination, state persistence, API exposure, and real-time monitoring.
+All three layers — agents, orchestration, and frontend — are merged and working.
 
-### Files Created (18 total)
+### Backend (18 API routes)
 
 **Core Orchestration:**
 - `app/orchestrator/orchestrate.py` — Workflow state machine, agent sequencing, parallel execution (Agents 3+4)
 - `app/main.py` — FastAPI entry point, route registration, CORS middleware
 
 **Services:**
-- `app/services/redis_client.py` — Redis helpers for workflows, contracts, artifacts, streams, audit logs
+- `app/services/redis_client.py` — Redis helpers for workflows, contracts, risk, decision, artifacts, streams, audit logs
 - `app/services/tavily_client.py` — Vendor research via Orchestrate's `vasco-tavily` tool
 
-**Agents:**
+**All 6 Agents:**
 - `app/agents/ingestion.py` — Agent 1: Document parsing, classification, vendor hint extraction
+- `app/agents/extraction.py` — Agent 2: Contract field extraction (40+ fields, per-field confidence)
+- `app/agents/risk.py` — Agent 3: Risk scoring across 4 categories (rule-based, no LLM)
 - `app/agents/research.py` — Agent 4: Vendor research with Redis caching (24h TTL)
+- `app/agents/decision.py` — Agent 5: LLM synthesis → recommendation (RENEGOTIATE/CANCEL/etc.)
 - `app/agents/generation.py` — Agent 6: Artifact generation (5 types) via Claude
 
-**Data Models:**
-- `app/models/workflow.py` — Workflow state and event models
-- `app/models/artifacts.py` — Artifact bundle and approval gate models
-
-**API Routers (7 total):**
+**API Routers (9 total):**
 - `app/routers/workflows.py` — POST/GET workflows + approval
 - `app/routers/documents.py` — Document upload (triggers background pipeline)
-- `app/routers/contracts.py` — Extract contract data retrieval
+- `app/routers/contracts.py` — Extracted contract data retrieval
+- `app/routers/risk.py` — Risk report retrieval
+- `app/routers/decision.py` — Decision retrieval
 - `app/routers/qa.py` — Contract Q&A powered by Claude
 - `app/routers/spend.py` — Spend analytics across all contracts
 - `app/routers/renewals.py` — Urgent renewals sorted by deadline
-- `app/routers/artifacts.py` — Artifact retrieval and approval
+- `app/routers/artifacts.py` — Artifact retrieval and per-artifact approval
 
 **Real-Time:**
 - `app/websocket/agent_feed.py` — WebSocket handler for live agent event streaming
@@ -110,7 +118,27 @@ The orchestration layer that connects Amaan's agents to the world. These compone
 **Infrastructure:**
 - `docker-compose.yml` — Redis + backend services
 - `Makefile` — Build and run commands
-- `requirements.txt` — Updated with FastAPI, Redis, uvicorn, websockets, httpx
+- `requirements.txt` — FastAPI, Redis, uvicorn, websockets, httpx, python-multipart
+
+### Frontend (Next.js 16 + React 19 + Tailwind v4)
+
+**App Router** (colocated in `app/` alongside Python backend):
+- `app/page.tsx` — Single-page dashboard (upload → extract → evaluate → recommend → approve)
+- `app/layout.tsx` — Root layout with Space Grotesk + IBM Plex Mono fonts
+- `app/globals.css` — Tailwind v4 theme, glass-morphism panel styles
+
+**Components** (`src/components/`):
+- `upload-panel.tsx` — Drag-and-drop file upload with status indicators
+- `live-agent-feed.tsx` — Real-time agent event timeline
+- `contract-summary-card.tsx` — Extracted fields with per-field confidence badges
+- `recommendation-card.tsx` — Decision display with vendor research + deadline callout
+- `artifact-review-panel.tsx` — Negotiation points + draft email with approve button
+
+**Hooks & Lib** (`src/hooks/`, `src/lib/`):
+- `use-workflow.ts` — Full workflow state machine: create → upload → poll → hydrate
+- `api-client.ts` — Typed fetch client for all 18 backend endpoints
+- `adapters.ts` — Backend response → UI model transforms
+- `mock-data.ts` — Demo fallback (Zoom scenario) when backend is unavailable
 
 ---
 

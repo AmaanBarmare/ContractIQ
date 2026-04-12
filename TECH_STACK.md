@@ -14,7 +14,8 @@ Full breakdown of every technology used in ContractIQ, why it was chosen, and ex
 | External Research | Tavily Search API (via Orchestrate `vasco-tavily` tool) | — |
 | Document Parsing | PyMuPDF | Latest |
 | Backend API | FastAPI | 0.115+ |
-| Frontend | React + Next.js | Next 14 |
+| Frontend | React 19 + Next.js 16 (App Router) | Next 16.2.3 |
+| Styling | Tailwind CSS | v4 |
 | Containerization | Docker | Latest |
 
 ---
@@ -244,14 +245,23 @@ async def ws_agent_feed(websocket, workflow_id: str):
 
 ## React + Next.js Frontend
 
-**Role:** UI surfaces including Dashboard, Live Agent Feed, Artifact Approval UI, and Renewal Command Center.
+**Role:** Single-page dashboard for the full renewal workflow: upload → extract → evaluate → recommend → approve.
+
+**Stack:** Next.js 16.2.3 (App Router, Turbopack) + React 19 + Tailwind CSS v4.
+
+**Architecture:**
+- App Router files live in `app/` alongside the Python backend (Next.js ignores `.py` files)
+- Components, hooks, and lib code live in `src/` with `@/*` path aliases
+- Single-page app — all five workflow steps visible on one dashboard
+- Demo fallback mode: if the backend is unavailable, the UI shows pre-built Zoom scenario data
 
 **Key libraries:**
-- `react-query` — data fetching and cache management
-- `recharts` — spend analytics charts
-- `framer-motion` — Live Agent Feed animations
-- `tailwindcss` — styling
-- `shadcn/ui` — component library
+- `tailwindcss` v4 — utility-first styling with glass-morphism panel design
+- Custom `useWorkflow` hook — manages workflow state machine (create → upload → poll → hydrate → approve)
+- Typed `api-client.ts` — fetch-based client matching all 18 backend routes
+- `adapters.ts` — transforms backend Pydantic model shapes into UI-friendly types
+
+**Fonts:** Space Grotesk (body) + IBM Plex Mono (code/labels)
 
 ---
 

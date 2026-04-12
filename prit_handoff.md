@@ -1,6 +1,8 @@
 # Handoff to Prit — Claude, Orchestrate & Redis Setup
 
 > **Status: COMPLETE.** Prit's orchestration layer has been merged into main (PR #1, commit d8e8bba). All 24 files integrated, all imports verified. The full pipeline — FastAPI, Redis, Tavily, WebSocket, all 6 agents — is wired up and working.
+>
+> **Frontend also merged** (hackathon-demo branch, commit ff8bedb). Neil's Next.js 16 dashboard is connected to the backend with 18 API routes. Frontend lives at root level: `app/page.tsx` (App Router), `src/components/`, `src/hooks/`, `src/lib/`. Risk and decision endpoints were added to match frontend expectations. TypeScript builds clean, demo fallback mode works when Redis is offline.
 
 Hey Prit — here's everything you need to pick up from where I left off.
 

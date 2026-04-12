@@ -72,19 +72,29 @@ contractiq/
 │   └── websocket/
 │       └── agent_feed.py        ← WebSocket handler for Live Agent Feed
 │
-├── frontend/                    ← Next.js + React frontend
-│   ├── app/
-│   │   ├── page.tsx             ← Dashboard
-│   │   ├── ask/page.tsx         ← Contract Q&A
-│   │   ├── renewals/page.tsx    ← Renewal Command Center
-│   │   ├── vendors/[id]/page.tsx ← Vendor workspace
-│   │   └── workflows/[id]/page.tsx ← Workflow view with Live Agent Feed
-│   └── components/
-│       ├── AgentFeed.tsx        ← Live Agent Feed component (WebSocket)
-│       ├── ArtifactApproval.tsx ← Artifact review and approval UI
-│       ├── ConfirmField.tsx     ← Confidence confirmation prompt
-│       ├── RenewalCard.tsx      ← Renewal Command Center row
-│       └── UploadZone.tsx       ← Drag-and-drop upload
+├── app/                         ← FastAPI backend + Next.js App Router (colocated)
+│   │                              Python (.py) = backend; TypeScript (.tsx) = frontend
+│   ├── layout.tsx               ← Next.js root layout (App Router)
+│   ├── page.tsx                 ← Dashboard (single-page app)
+│   ├── globals.css              ← Tailwind v4 global styles
+│   │   ... (Python backend files listed above)
+│
+├── src/                         ← Frontend source (Next.js 16 + React 19)
+│   ├── components/
+│   │   ├── upload-panel.tsx     ← Drag-and-drop file upload
+│   │   ├── live-agent-feed.tsx  ← Live Agent Feed (real-time events)
+│   │   ├── contract-summary-card.tsx ← Extracted contract terms display
+│   │   ├── recommendation-card.tsx   ← Decision + vendor research panel
+│   │   └── artifact-review-panel.tsx ← Artifact approval UI
+│   ├── hooks/
+│   │   └── use-workflow.ts      ← Workflow state machine + API polling
+│   └── lib/
+│       ├── api-client.ts        ← Backend API client (fetch-based)
+│       ├── api-types.ts         ← TypeScript types matching backend responses
+│       ├── adapters.ts          ← Backend → UI data transforms
+│       ├── mock-data.ts         ← Demo fallback data (Zoom scenario)
+│       ├── types.ts             ← UI-level type definitions
+│       └── workflow-state.ts    ← Workflow phase enum + state shape
 │
 ├── agents/                      ← Agent documentation (markdown)
 ├── workflows/                   ← Workflow documentation (markdown)
@@ -148,7 +158,7 @@ SECRET_KEY=your-secret-key-here
 pip install -r requirements.txt
 ```
 
-Key packages: `anthropic`, `pymupdf`, `pydantic`, `python-dotenv`. FastAPI / Redis / orchestration packages are added by the Integration Engineer as that layer is built.
+Key packages: `anthropic`, `pymupdf`, `pydantic`, `python-dotenv`, `fastapi`, `redis`, `uvicorn`, `httpx`, `websockets`, `python-multipart`.
 
 ### 3. Start Redis Stack
 
@@ -171,10 +181,10 @@ uvicorn app.main:app --reload --port 8000
 ### 5. Start frontend
 
 ```bash
-cd frontend && npm install && npm run dev
+npm install && npm run dev
 ```
 
-Frontend runs on `http://localhost:3000`.
+Frontend runs on `http://localhost:3000`. Next.js 16 uses the App Router with files in `app/` (colocated with Python backend) and `src/` for components/hooks/lib.
 
 ---
 
@@ -270,6 +280,8 @@ Tavily is purpose-built for AI agents — it returns clean, structured, citation
 | `contract:{workflow_id}` | Hash | All extracted contract fields with confidence scores |
 | `doc:{file_id}` | Hash | Document metadata (type, vendor, hash, upload info) |
 | `vendor:{vendor_id}:docs` | Set | All file_ids associated with this vendor |
+| `risk:{workflow_id}` | String (JSON, TTL 7d) | Risk report (RiskReport.model_dump()) |
+| `decision:{workflow_id}` | String (JSON, TTL 7d) | Decision (Decision.model_dump()) |
 | `artifacts:{workflow_id}` | String (JSON, TTL 7d) | All generated artifacts with approval status |
 | `vendor_research:{vendor_id}` | String (JSON, TTL 24h) | Cached Tavily results |
 | `renewals_by_deadline` | Sorted Set | vendor_id → days_until_cancellation_deadline |

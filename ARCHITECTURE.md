@@ -2,6 +2,8 @@
 
 ContractIQ is a multi-agent system where each agent owns exactly one job. No agent does its neighbor's work. IBM Watsonx Orchestrate sits above all of them as the master coordinator — routing intent, managing state, enforcing guardrails, and assembling final outputs.
 
+**Implementation note:** The frontend (Next.js 16 App Router) and backend (FastAPI) are colocated in the `app/` directory. Next.js ignores `.py` files; Python ignores `.tsx` files. Frontend components and hooks live in `src/`. The backend exposes 18 API routes on port 8000; the frontend runs on port 3000.
+
 ---
 
 ## System Diagram

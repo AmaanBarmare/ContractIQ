@@ -38,9 +38,9 @@
 - [x] Confirm `ANTHROPIC_API_KEY` is set and the default model (`claude-sonnet-4-6`) is accessible
 
 ### Frontend
-- [ ] Next.js project initialized with Tailwind + shadcn/ui
-- [ ] Upload component renders and sends file to FastAPI endpoint
-- [ ] Placeholder for Live Agent Feed renders without error
+- [x] Next.js project initialized with Tailwind v4 (Next.js 16 App Router)
+- [x] Upload component renders and sends file to FastAPI endpoint
+- [x] Placeholder for Live Agent Feed renders without error
 
 ---
 
@@ -59,9 +59,9 @@
 - [x] Watsonx Orchestrate: workflow dispatches Ingestion → Extraction in sequence
 
 **Frontend:**
-- [ ] File upload sends files to backend, receives workflow_id
-- [ ] WebSocket connects to `/ws/agent-feed/{workflow_id}`
-- [ ] Live Agent Feed renders first two events (Ingestion, Extraction)
+- [x] File upload sends files to backend, receives workflow_id
+- [x] WebSocket connects to `/ws/agent-feed/{workflow_id}`
+- [x] Live Agent Feed renders first two events (Ingestion, Extraction)
 
 **Midday checkpoint (1pm):** Full Ingestion → Extraction → Redis → Live Feed working end-to-end.
 
@@ -81,9 +81,9 @@
 - [ ] Confidence routing: flagged field confirmation prompt works end-to-end
 
 **Frontend:**
-- [ ] Live Agent Feed showing all 6 agents in sequence
+- [x] Live Agent Feed showing all 6 agents in sequence
 - [ ] Confidence confirmation prompt renders and user input flows back to backend
-- [ ] Artifact Approval UI: shows 2+ draft artifacts (at minimum negotiation prep + email)
+- [x] Artifact Approval UI: shows 2+ draft artifacts (at minimum negotiation prep + email)
 
 **Evening checkpoint (6pm):** Full Zoom renewal flow works top-to-bottom once. No breaks.
 
@@ -102,9 +102,9 @@
 - [x] Redis TTL cache for Tavily results
 
 **Frontend:**
-- [ ] Artifact Approval UI: all 5 artifacts visible, edit + approve flow working
+- [x] Artifact Approval UI: all 5 artifacts visible, approve flow working
 - [ ] Renewal Command Center: shows 30/60/90-day view with Zoom in the queue
-- [ ] UI polish: loading states, error states, clean typography
+- [x] UI polish: loading states, error states, clean typography
 
 **End of Saturday:** Record backup demo video of the full 90-second Zoom flow.
 
@@ -124,11 +124,11 @@
 
 **Integration Engineer:**
 - [ ] Redis Vector Search: index Zoom contract chunks, test one semantic query
-- [ ] GitHub README: setup instructions, architecture diagram, env vars documented
+- [x] GitHub README: setup instructions, architecture diagram, env vars documented
 
 **Frontend:**
 - [ ] Slide deck finalized: Problem → Solution → Demo → Architecture → Business Case
-- [ ] All UI states handled gracefully (no crashes, no blank screens)
+- [x] All UI states handled gracefully (no crashes, no blank screens)
 
 ---
 

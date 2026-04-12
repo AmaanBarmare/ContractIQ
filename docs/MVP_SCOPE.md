@@ -12,7 +12,7 @@ Everything in P0 is required for the Renewal Rescue demo to run end-to-end.
 
 | Feature | Owner | Status |
 |---|---|---|
-| Contract upload (drag-and-drop, 4 files) | Frontend | Pending (frontend) |
+| Contract upload (drag-and-drop, 4 files) | Frontend | **Done** (`src/components/upload-panel.tsx`) |
 | Ingestion Agent: classify documents, link to vendor | Agent Engineer | **Done** (`app/agents/ingestion.py`) |
 | Extraction Agent: 15+ key fields from PDF | Agent Engineer | **Done** (`app/agents/extraction.py`) |
 | Watsonx Orchestrate: route between agents, confidence threshold | Integration Engineer | **Done** (`app/orchestrator/orchestrate.py`) |
@@ -21,8 +21,8 @@ Everything in P0 is required for the Renewal Rescue demo to run end-to-end.
 | Vendor Research Agent: Tavily integration (news + pricing + alternatives) | Integration Engineer | **Done** (`app/agents/research.py`, `app/services/tavily_client.py`) |
 | Decision Agent: structured recommendation with reasoning | Agent Engineer | **Done** (`app/agents/decision.py`) |
 | Action Agent: negotiation prep sheet + vendor email draft | Agent Engineer | **Done** (`app/agents/generation.py`) |
-| Live Agent Feed: real-time Redis Stream → WebSocket → UI | Frontend + Integration | **Backend done** (`app/websocket/agent_feed.py`) |
-| Artifact Approval UI: review, edit, approve artifacts | Frontend | Pending (frontend); backend API ready |
+| Live Agent Feed: real-time Redis Stream → WebSocket → UI | Frontend + Integration | **Done** (`app/websocket/agent_feed.py` + `src/components/live-agent-feed.tsx`) |
+| Artifact Approval UI: review, edit, approve artifacts | Frontend | **Done** (`src/components/artifact-review-panel.tsx`) |
 | Confidence routing: confirmation prompt for flagged fields | Integration + Frontend | Pending |
 
 ---
@@ -33,7 +33,7 @@ Everything in P0 is required for the Renewal Rescue demo to run end-to-end.
 |---|---|---|
 | Full 40+ field extraction | Agent Engineer | Pending |
 | Contract Q&A (natural language questions via Claude) | Integration + Agent | **Done** (`app/routers/qa.py`) |
-| Renewal Command Center: 30/60/90-day view, priority sorted | Frontend | **Backend done** (`app/routers/renewals.py`) |
+| Renewal Command Center: 30/60/90-day view, priority sorted | Frontend | **Backend done** (`app/routers/renewals.py`); frontend page pending |
 | Spend intelligence: total spend aggregation, category breakdown | Agent Engineer | **Done** (`app/routers/spend.py`) |
 | CFO Summary artifact | Agent Engineer | **Done** (executive summary in `generation.py`) |
 | Full Internal Renewal Brief artifact | Agent Engineer | **Done** (renegotiation brief in `generation.py`) |
