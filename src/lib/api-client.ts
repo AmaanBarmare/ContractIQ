@@ -18,7 +18,7 @@ import type {
 } from "@/lib/api-types";
 
 const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_CONTRACTIQ_API_BASE_URL ?? "http://localhost:8000"
+  process.env.NEXT_PUBLIC_CONTRACTIQ_API_BASE_URL ?? ""
 ).replace(/\/$/, "");
 
 const buildApiUrl = (path: string) => `${API_BASE_URL}${path}`;
