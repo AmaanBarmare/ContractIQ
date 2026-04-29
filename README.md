@@ -83,7 +83,7 @@ python scripts/run_pipeline.py
 
 All three layers — agents, orchestration, and frontend — are merged and working.
 
-### Backend (18 API routes)
+### Backend (FastAPI — 12 REST routes + WebSocket + health)
 
 **Core Orchestration:**
 - `app/orchestrator/orchestrate.py` — Workflow state machine, agent sequencing, parallel execution (Agents 3+4)
@@ -102,7 +102,7 @@ All three layers — agents, orchestration, and frontend — are merged and work
 - `app/agents/generation.py` — Agent 6: Artifact generation (5 types) via Claude
 
 **API Routers (9 total):**
-- `app/routers/workflows.py` — POST/GET workflows + approval
+- `app/routers/workflows.py` — POST/GET/DELETE workflows + POST approve
 - `app/routers/documents.py` — Document upload (triggers background pipeline)
 - `app/routers/contracts.py` — Extracted contract data retrieval
 - `app/routers/risk.py` — Risk report retrieval
@@ -123,9 +123,22 @@ All three layers — agents, orchestration, and frontend — are merged and work
 ### Frontend (Next.js 16 + React 19 + Tailwind v4)
 
 **App Router** (colocated in `app/` alongside Python backend):
+- `app/page.tsx` — Marketing/home redirect entry
+- `app/landing/page.tsx` — Public landing page ("Command Intelligence" aesthetic)
+- `app/(app)/layout.tsx` — Authenticated app shell with sidebar
 - `app/(app)/page.tsx` — Dashboard: story arc, six-agent runway, upload → workflow
+- `app/(app)/dashboard/page.tsx` — Operational dashboard view
+- `app/(app)/renewals/page.tsx` — Renewal command center
+- `app/(app)/workflows/[id]/page.tsx` — Workflow detail (live agent feed)
+- `app/(app)/workflows/[id]/results/page.tsx` — Decision + artifacts review
 - `app/layout.tsx` — Root layout: **Syne** (display) + **Outfit** (UI) + **IBM Plex Mono**
 - `app/globals.css` — Tailwind v4 + “mission control” slab surfaces, aurora backdrop, CTAs
+
+**Next.js API Routes** (`app/api/` — Vercel deployment shim that mirrors the FastAPI backend so the frontend can demo without a Python server):
+- `app/api/workflows/route.ts` + `app/api/workflows/[id]/{route,approve,artifacts,decision,documents,risk}/route.ts`
+- `app/api/contracts/[id]/route.ts`
+- `app/api/spend/summary/route.ts`
+- `app/api/renewals/urgent/route.ts`
 
 **Components** (`src/components/`):
 - `demo-runway.tsx` — Horizontal six-agent strip (shows the pipeline before upload)
@@ -138,9 +151,12 @@ All three layers — agents, orchestration, and frontend — are merged and work
 
 **Hooks & Lib** (`src/hooks/`, `src/lib/`):
 - `use-workflow.ts` — Full workflow state machine: create → upload → poll → hydrate
-- `api-client.ts` — Typed fetch client for all 18 backend endpoints
+- `api-client.ts` — Typed fetch client (12 functions) covering every FastAPI endpoint the UI calls
+- `api-types.ts` — TypeScript types matching backend responses
 - `adapters.ts` — Backend response → UI model transforms
 - `mock-data.ts` — Demo fallback (Zoom scenario) when backend is unavailable
+- `types.ts` / `ui-types.ts` — UI-level domain and view-model types
+- `workflow-state.ts` — Workflow phase enum + state shape
 
 ---
 
@@ -321,17 +337,11 @@ contractiq/
 │   ├── renewal_rescue.md        ← Flagship demo workflow
 │   ├── contract_qa.md           ← Natural language Q&A workflow
 │   ├── new_vendor_review.md     ← New contract onboarding workflow
-│   ├── spend_optimization.md    ← Spend analysis workflow
-│   └── executive_reporting.md  ← CFO/VP reporting workflow
+│   └── spend_optimization.md    ← Spend analysis workflow
 │
 ├── modules/
-│   ├── ingestion_layer.md       ← Document ingestion specs
-│   ├── knowledge_layer.md       ← Contract Q&A and search
 │   ├── extraction_engine.md     ← Structured extraction field reference
-│   ├── risk_engine.md           ← Risk detection categories and scoring
-│   ├── spend_intelligence.md    ← Spend analytics
-│   ├── renewal_command_center.md← Renewal dashboard
-│   └── live_agent_feed.md       ← Real-time agent activity UI
+│   └── risk_engine.md           ← Risk detection categories and scoring
 │
 ├── docs/
 │   ├── DEMO_GUIDE.md            ← Step-by-step hackathon demo script
